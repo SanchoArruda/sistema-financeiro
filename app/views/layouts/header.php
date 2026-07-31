@@ -72,6 +72,11 @@ $routeAtual = $_GET['route'] ?? 'dashboard';
                                 Gestão de Usuários
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo $routeAtual === 'configuracoes' ? 'active fw-bold' : ''; ?>" href="?route=configuracoes">
+                                Configurações
+                            </a>
+                        </li>
                     <?php endif; ?>
                 </ul>
 

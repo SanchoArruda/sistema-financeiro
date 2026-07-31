@@ -168,6 +168,99 @@ class LogHelper {
     }
 
     /**
+     * Retorna estatísticas sobre os arquivos de log gravados no sistema.
+     * 
+     * @return array Informações de quantidade e tamanho dos logs
+     */
+    public static function getLogStats(): array {
+        $baseDir = __DIR__ . '/../../logs';
+        $stats = [
+            'total_arquivos'      => 0,
+            'total_bytes'         => 0,
+            'tamanho_formatado'   => '0 B',
+            'arquivos_erros'      => 0,
+            'arquivos_seguranca'  => 0,
+        ];
+
+        if (!is_dir($baseDir)) {
+            return $stats;
+        }
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($baseDir, RecursiveDirectoryIterator::SKIP_DOTS)
+        );
+
+        foreach ($iterator as $item) {
+            if ($item->isFile()) {
+                $nome = $item->getFilename();
+                if ($nome === '.htaccess' || $nome === '.gitkeep') {
+                    continue;
+                }
+
+                $caminho = $item->getPathname();
+                $tamanho = $item->getSize();
+                $stats['total_arquivos']++;
+                $stats['total_bytes'] += $tamanho;
+
+                if (str_contains($caminho, '/security/')) {
+                    $stats['arquivos_seguranca']++;
+                } else {
+                    $stats['arquivos_erros']++;
+                }
+            }
+        }
+
+        $bytes = $stats['total_bytes'];
+        if ($bytes >= 1048576) {
+            $stats['tamanho_formatado'] = number_format($bytes / 1048576, 2, ',', '.') . ' MB';
+        } elseif ($bytes >= 1024) {
+            $stats['tamanho_formatado'] = number_format($bytes / 1024, 2, ',', '.') . ' KB';
+        } else {
+            $stats['tamanho_formatado'] = $bytes . ' B';
+        }
+
+        return $stats;
+    }
+
+    /**
+     * Executa a limpeza manual de todos os arquivos de log de erro.
+     * 
+     * @return int Quantidade de arquivos removidos
+     */
+    public static function cleanErrorLogs(): int {
+        $baseDir = __DIR__ . '/../../logs';
+        if (!is_dir($baseDir)) {
+            return 0;
+        }
+
+        $arquivosRemovidos = 0;
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($baseDir, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        foreach ($iterator as $item) {
+            $caminho = $item->getPathname();
+            $nome = $item->getFilename();
+
+            if ($nome === '.htaccess' || $nome === '.gitkeep' || str_contains($caminho, '/security/')) {
+                continue;
+            }
+
+            if ($item->isFile()) {
+                if (@unlink($caminho)) {
+                    $arquivosRemovidos++;
+                }
+            } elseif ($item->isDir()) {
+                @rmdir($caminho);
+            }
+        }
+
+        return $arquivosRemovidos;
+    }
+
+    /**
      * Garante que o arquivo .htaccess esteja presente no diretório de logs para impedir o acesso direto.
      * 
      * @param string $baseDir Caminho base do diretório logs
@@ -179,3 +272,4 @@ class LogHelper {
         }
     }
 }
+

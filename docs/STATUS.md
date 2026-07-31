@@ -1,8 +1,8 @@
 # Status do Projeto — Finzy
 
 **Última atualização:** 2026-07-31  
-**Fase Atual:** Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5) — Concluída  
-**Próximo Passo:** Fase 11 — Configurações Gerais e Gerenciamento de Logs (em chat novo + prompt da próxima fase)
+**Fase Atual:** Fase 11 — Configurações Gerais e Gerenciamento de Logs — Concluída  
+**Próximo Passo:** Fase 12 — Relatórios e Exportações (CSV e PDF) (em chat novo + prompt da próxima fase)
 
 ---
 
@@ -33,11 +33,14 @@
 - **Fase 9 — Lixeira (Consulta e Restauração por Perfil) (Concluída):**
   - Adicionados métodos de lixeira e criado `LixeiraController.php` com views e controle RBAC por perfil.
 - **Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5) (Concluída):**
-  - Adicionados métodos de agregação no `LancamentoModel.php` (`obterKpisDashboard`, `obterGraficoComparativo`, `obterTop5CategoriasDespesa`, `obterUltimosLancamentos`).
-  - Criado `DashboardController.php` com suporte a atalhos de período ("Este Mês", "Mês Passado", "Este Ano", "Personalizado").
-  - Criada a biblioteca local de gráficos em HTML5 Canvas em `assets/js/chart.min.js` e script `assets/js/dashboard.js` (sem dependência de CDN externa).
-  - Criada a View `app/views/dashboard/index.php` seguindo o Design System *Fiscal Precision* com 4 cards de KPIs (Saldo, Receitas, Despesas, Pendências e Atrasos), gráfico comparativo de Receitas vs Despesas, ranking Top 5 de categorias e tabela de lançamentos recentes.
-  - Atualizada a rota `dashboard` no Front Controller `index.php`.
+  - Construção da tela principal com KPIs do mês, gráfico comparativo, ranking Top 5 e suporte a filtros de período.
+- **Fase 11 — Configurações Gerais e Gerenciamento de Logs (Concluída):**
+  - Criado `ConfiguracaoModel.php` para consulta e persistência dos parâmetros operacionais globais (`tempo_sessao_minutos`, `retencao_logs_dias`).
+  - Criado `ConfiguracaoController.php` com controle de permissão RBAC exclusivo para Administradores e validação estrita de intervalos (sessão: 5-480 min, retenção: 1-365 dias).
+  - Expandido `LogHelper.php` com métodos `getLogStats()` e `cleanErrorLogs()` para contabilizar uso de disco e permitir limpeza manual segura preservando logs de auditoria/segurança.
+  - Atualizado `AuthHelper.php` para checar `tempo_sessao_minutos` dinamicamente a cada requisição.
+  - Criada a View `app/views/configuracoes/index.php` alinhada ao Design System *Fiscal Precision*, com formulário de parâmetros, cards de estatísticas de logs e modal de confirmação para limpeza manual.
+  - Atualizados `index.php` (rotas `configuracoes`, `configuracoes_salvar`, `configuracoes_limpar_logs`) e `app/views/layouts/header.php` (item no menu do Administrador).
 
 ---
 
@@ -54,12 +57,13 @@
 - [x] **Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete)**
 - [x] **Fase 9 — Lixeira (Consulta e Restauração por Perfil)**
 - [x] **Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5)**
-  - [x] Atualizar `app/models/LancamentoModel.php` com consultas do Dashboard
-  - [x] Criar `app/controllers/DashboardController.php`
-  - [x] Criar biblioteca de gráficos Canvas em `assets/js/chart.min.js` e `assets/js/dashboard.js`
-  - [x] Construir View `app/views/dashboard/index.php`
-  - [x] Atualizar rota `dashboard` em `index.php`
-- [ ] **Fase 11 — Configurações Gerais e Gerenciamento de Logs**
+- [x] **Fase 11 — Configurações Gerais e Gerenciamento de Logs**
+  - [x] Criar `app/models/ConfiguracaoModel.php`
+  - [x] Criar `app/controllers/ConfiguracaoController.php`
+  - [x] Atualizar `app/helpers/LogHelper.php` e `app/helpers/AuthHelper.php`
+  - [x] Criar View `app/views/configuracoes/index.php`
+  - [x] Registrar rotas `configuracoes`, `configuracoes_salvar` e `configuracoes_limpar_logs` no Front Controller `index.php`
+  - [x] Adicionar link "Configurações" no menu do Administrador em `app/views/layouts/header.php`
 - [ ] **Fase 12 — Relatórios e Exportações (CSV e PDF)**
 - [ ] **Fase 13 — Revisão de Segurança, Qualidade e Validação Final**
 
@@ -67,4 +71,4 @@
 
 ## Próxima Ação Recomendada
 
-Fase 10 concluída com sucesso! Iniciar a **Fase 11 — Configurações Gerais e Gerenciamento de Logs** em um novo chat com o prompt da próxima fase.
+Fase 11 concluída com sucesso! Iniciar a **Fase 12 — Relatórios e Exportações (CSV e PDF)** em um novo chat com o prompt da próxima fase.

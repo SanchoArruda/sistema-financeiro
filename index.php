@@ -30,6 +30,9 @@ require_once __DIR__ . '/app/helpers/LogHelper.php';
 require_once __DIR__ . '/app/helpers/AuthHelper.php';
 require_once __DIR__ . '/app/helpers/FormatHelper.php';
 
+// Carrega models adicionais
+require_once __DIR__ . '/app/models/ConfiguracaoModel.php';
+
 // Carrega controllers
 require_once __DIR__ . '/app/controllers/AuthController.php';
 require_once __DIR__ . '/app/controllers/DashboardController.php';
@@ -39,6 +42,7 @@ require_once __DIR__ . '/app/controllers/ContaController.php';
 require_once __DIR__ . '/app/controllers/UsuarioController.php';
 require_once __DIR__ . '/app/controllers/LancamentoController.php';
 require_once __DIR__ . '/app/controllers/LixeiraController.php';
+require_once __DIR__ . '/app/controllers/ConfiguracaoController.php';
 
 // Configuração de manipuladores globais de erros e exceções
 set_exception_handler(function (Throwable $e) {
@@ -244,6 +248,19 @@ switch ($route) {
 
     case 'lixeira_restaurar':
         (new LixeiraController())->restaurar();
+        break;
+
+    // Rotas de Configurações Gerais e Gerenciamento de Logs (Fase 11 — Restrito a Administradores)
+    case 'configuracoes':
+        (new ConfiguracaoController())->index();
+        break;
+
+    case 'configuracoes_salvar':
+        (new ConfiguracaoController())->salvar();
+        break;
+
+    case 'configuracoes_limpar_logs':
+        (new ConfiguracaoController())->limparLogs();
         break;
 
     default:

@@ -80,6 +80,12 @@ class AuthHelper {
 
         // Tempo limite de inatividade (em segundos) — Padrão: 30 minutos (1800s)
         $timeoutMinutos = defined('DEFAULT_SESSION_TIMEOUT') ? DEFAULT_SESSION_TIMEOUT : 30;
+        if (class_exists('ConfiguracaoModel')) {
+            $valConfig = (int) ConfiguracaoModel::obterValor('tempo_sessao_minutos', (string) $timeoutMinutos);
+            if ($valConfig >= 5 && $valConfig <= 480) {
+                $timeoutMinutos = $valConfig;
+            }
+        }
         $timeoutSegundos = $timeoutMinutos * 60;
 
         if (isset($_SESSION['ultimo_acesso'])) {
