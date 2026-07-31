@@ -52,7 +52,13 @@ Este arquivo serve para registrar falhas, exceções ou problemas encontrados du
 - Sintoma: Tela de erro amigável "Ocorreu um erro inesperado" exibida ao tentar acessar a rota `?route=relatorios`.
 - Causa: O `RelatorioController.php` tentou invocar `AuthHelper::requireAuth()`, quando a classe `AuthHelper` definia o método como `requireLogin()`.
 - Solução aplicada: Atualizado o `RelatorioController.php` para utilizar `AuthHelper::requireLogin()` e adicionado o método estático `requireAuth()` em `AuthHelper.php` como alias.
-- Como evitar no futuro: Manter alias de compatibilidade no `AuthHelper` (`requireAuth` -> `requireLogin`).
+## 2026-07-31 - Call to undefined method PdfReportHelper::SetXY()
+
+- Sintoma: Tela de erro amigável "Ocorreu um erro inesperado" exibida ao tentar exportar o relatório em PDF.
+- Causa: A classe `PdfReportHelper` (herdando de FPDF) invocava `$this->SetXY()`, porém o método `SetXY($x, $y)` não estava presente no motor `vendor/fpdf/fpdf.php`.
+- Solução aplicada: Adicionado o método público `SetXY($x, $y)` na classe `FPDF` em `vendor/fpdf/fpdf.php`.
+- Como evitar no futuro: Garantir a presença de todos os métodos utilitários de posicionamento (`SetX`, `SetY`, `SetXY`) na classe FPDF base.
+
 
 
 
