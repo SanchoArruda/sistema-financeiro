@@ -600,6 +600,11 @@ class FPDF {
         if ($resetX) $this->x = $this->lMargin;
     }
 
+    public function SetXY($x, $y) {
+        $this->SetY($y, false);
+        $this->SetX($x);
+    }
+
     public function Output($dest='', $name='', $isUTF8=false) {
         $this->Close();
 
