@@ -69,6 +69,15 @@ Este arquivo serve para registrar falhas, exceções ou problemas encontrados du
 - Solução aplicada: Corrigidas as propriedades `$this->w` e `$this->h` em `__construct` e `_beginpage()` em `vendor/fpdf/fpdf.php` para dividir `$size` pelo fator `$this->k` (`$size[0] / $this->k`), garantindo unidades em milímetros.
 - Como evitar no futuro: Garantir que a conversão entre pontos e unidades do usuário (mm) em geradores de PDF converta corretamente as dimensões de página do vetor `$StdPageSizes`.
 
+---
+
+## 2026-07-31 - Redefinição de dimensões em `_beginpage()` em pontos no FPDF
+
+- Sintoma: A primeira página do relatório em PDF continuava sendo renderizada em branco no navegador.
+- Causa: O método interno `_getpagesize()` em `vendor/fpdf/fpdf.php` retornava o vetor em pontos (`595.28`, `841.89`) sem dividir por `$this->k`. Toda vez que `AddPage()` invocava `_beginpage()`, o motor FPDF detectava divergência e redefinia `$this->w` e `$this->h` para `595.28mm` e `841.89mm`, projetando os elementos para fora da página.
+- Solução aplicada: Atualizado o método `_getpagesize()` no `vendor/fpdf/fpdf.php` para retornar o tamanho da página já convertido em milímetros (`[$p[0] / $this->k, $p[1] / $this->k]`), preservando as dimensões A4 padrão (210mm x 297mm).
+
+
 
 
 
