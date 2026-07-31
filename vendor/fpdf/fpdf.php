@@ -115,12 +115,12 @@ class FPDF {
         $orientation = strtolower($orientation);
         if ($orientation === 'p' || $orientation === 'portrait') {
             $this->DefOrientation = 'P';
-            $this->w = $size[0];
-            $this->h = $size[1];
+            $this->w = $size[0] / $this->k;
+            $this->h = $size[1] / $this->k;
         } elseif ($orientation === 'l' || $orientation === 'landscape') {
             $this->DefOrientation = 'L';
-            $this->w = $size[1];
-            $this->h = $size[0];
+            $this->w = $size[1] / $this->k;
+            $this->h = $size[0] / $this->k;
         } else {
             $this->Error('Incorrect orientation: '.$orientation);
         }
@@ -371,7 +371,7 @@ class FPDF {
         if ($style === 'F') $op = 'f';
         elseif ($style === 'FD' || $style === 'DF') $op = 'B';
         else $op = 'S';
-        $this->_out(sprintf('%.2F %.2F %.2F %.2F re %s', $x * $this->k, ($this->h - $y) * $this->k, $w * $this->k, -$h * $this->k, $op));
+        $this->_out(sprintf('%.2F %.2F %.2F %.2F re %s', $x * $this->k, ($this->h - $y - $h) * $this->k, $w * $this->k, $h * $this->k, $op));
     }
 
     public function SetFont($family, $style='', $size=0) {
@@ -463,7 +463,7 @@ class FPDF {
         if ($fill || $border == 1) {
             if ($fill) $op = ($border == 1) ? 'B' : 'f';
             else $op = 'S';
-            $s = sprintf('%.2F %.2F %.2F %.2F re %s ', $this->x * $k, ($this->h - $this->y) * $k, $w * $k, -$h * $k, $op);
+            $s = sprintf('%.2F %.2F %.2F %.2F re %s ', $this->x * $k, ($this->h - ($this->y + $h)) * $k, $w * $k, $h * $k, $op);
         }
         if (is_string($border)) {
             $x = $this->x;
@@ -676,11 +676,11 @@ class FPDF {
 
         if ($orientation !== $this->CurOrientation || $size[0] !== $this->CurPageSize[0] || $size[1] !== $this->CurPageSize[1]) {
             if ($orientation === 'P') {
-                $this->w = $size[0];
-                $this->h = $size[1];
+                $this->w = $size[0] / $this->k;
+                $this->h = $size[1] / $this->k;
             } else {
-                $this->w = $size[1];
-                $this->h = $size[0];
+                $this->w = $size[1] / $this->k;
+                $this->h = $size[0] / $this->k;
             }
             $this->wPt = $this->w * $this->k;
             $this->hPt = $this->h * $this->k;
