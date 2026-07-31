@@ -668,6 +668,7 @@ class FPDF {
     protected function _beginpage($orientation, $size, $rotation) {
         $this->page++;
         $this->pages[$this->page] = '';
+        $this->state = 2;
         $this->PageInfo[$this->page] = [];
 
         if ($orientation === '') $orientation = $this->DefOrientation;
