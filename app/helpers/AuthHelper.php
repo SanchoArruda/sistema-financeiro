@@ -179,4 +179,86 @@ class AuthHelper {
 
         return hash_equals($_SESSION['csrf_token'], $token);
     }
+
+    /**
+     * Verifica se o usuário autenticado possui determinado perfil/papel.
+     * 
+     * @param string|array $perfis Permite um perfil em string ou array de perfis permitidos
+     * @return bool
+     */
+    public static function hasRole(string|array $perfis): bool {
+        if (!self::isAuthenticated()) {
+            return false;
+        }
+
+        $perfilAtual = $_SESSION['usuario_perfil'] ?? '';
+        $perfisPermitidos = is_array($perfis) ? $perfis : [$perfis];
+
+        return in_array($perfilAtual, $perfisPermitidos, true);
+    }
+
+    /**
+     * Verifica se o usuário autenticado é um Administrador.
+     * 
+     * @return bool
+     */
+    public static function isAdmin(): bool {
+        return self::hasRole('administrador');
+    }
+
+    /**
+     * Verifica se o usuário autenticado é um Operador.
+     * 
+     * @return bool
+     */
+    public static function isOperador(): bool {
+        return self::hasRole('operador');
+    }
+
+    /**
+     * Exige que o usuário possua um dos perfis autorizados.
+     * Se não possuir, grava log de segurança e exibe a tela de Acesso Negado (403).
+     * 
+     * @param string|array $perfis Perfis permitidos para acessar a ação/rota
+     */
+    public static function requireRole(string|array $perfis): void {
+        self::requireLogin();
+
+        if (!self::hasRole($perfis)) {
+            $rotaSolicitada = $_GET['route'] ?? 'desconhecida';
+            $perfilAtual = $_SESSION['usuario_perfil'] ?? 'Sem Perfil';
+            
+            if (class_exists('LogHelper')) {
+                LogHelper::logSecurity('acesso_negado', [
+                    'rota' => $rotaSolicitada,
+                    'perfil_usuario' => $perfilAtual,
+                    'perfis_requeridos' => (array) $perfis
+                ]);
+            }
+
+            self::exibirAcessoNegado();
+        }
+    }
+
+    /**
+     * Exige que o usuário conectado seja Administrador.
+     */
+    public static function requireAdmin(): void {
+        self::requireRole('administrador');
+    }
+
+    /**
+     * Define o código HTTP 403 e renderiza a View de Acesso Negado.
+     */
+    public static function exibirAcessoNegado(): void {
+        http_response_code(403);
+        $viewPath = __DIR__ . '/../views/auth/acesso_negado.php';
+        
+        if (file_exists($viewPath)) {
+            require $viewPath;
+        } else {
+            echo "<h1>403 — Acesso Negado</h1><p>Você não tem permissão para acessar este recurso.</p><a href='?route=dashboard'>Voltar ao Início</a>";
+        }
+        exit;
+    }
 }

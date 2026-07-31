@@ -11,6 +11,7 @@ if (!defined('FINZY_BOOTSTRAP')) {
 }
 
 require_once __DIR__ . '/../helpers/AuthHelper.php';
+require_once __DIR__ . '/../helpers/LogHelper.php';
 require_once __DIR__ . '/../helpers/MailHelper.php';
 require_once __DIR__ . '/../models/UsuarioModel.php';
 require_once __DIR__ . '/../models/TokenRecuperacaoModel.php';
@@ -57,6 +58,7 @@ class AuthController {
 
         $tokenCsrf = $_POST['csrf_token'] ?? '';
         if (!AuthHelper::validateCsrfToken($tokenCsrf)) {
+            LogHelper::logSecurity('login_invalido_csrf', ['ip' => $_SERVER['REMOTE_ADDR'] ?? '']);
             $this->exibirLogin('Sessão ou formulário inválido. Por favor, tente novamente.');
             return;
         }
@@ -73,18 +75,21 @@ class AuthController {
 
         // Verificação segura de credenciais (mensagem genérica para não revelar existência do e-mail)
         if (!$usuario || !password_verify($senha, $usuario['senha_hash'])) {
+            LogHelper::logSecurity('login_invalido', ['email' => $email]);
             $this->exibirLogin('E-mail ou senha incorretos.');
             return;
         }
 
         // Verifica se a conta está ativa
         if ($usuario['status'] !== 'ativo') {
+            LogHelper::logSecurity('login_usuario_inativo', ['usuario_id' => $usuario['id'], 'email' => $email]);
             $this->exibirLogin('Sua conta está inativa. Entre em contato com o Administrador.');
             return;
         }
 
         // Loga o usuário na sessão
         AuthHelper::loginUser($usuario);
+        LogHelper::logSecurity('login_sucesso', ['usuario_id' => $usuario['id'], 'email' => $usuario['email'], 'perfil' => $usuario['perfil']]);
 
         // Se for o primeiro acesso, direciona obrigatoriamente para a troca de senha
         if ((int)$usuario['primeiro_acesso'] === 1) {
@@ -305,6 +310,10 @@ class AuthController {
      * Realiza o logout do usuário.
      */
     public function logout(): void {
+        if (AuthHelper::isAuthenticated()) {
+            $user = AuthHelper::getLoggedUser();
+            LogHelper::logSecurity('logout', ['usuario_id' => $user['id'] ?? null, 'email' => $user['email'] ?? null]);
+        }
         AuthHelper::logout();
         header('Location: ?route=login&logged_out=1');
         exit;
