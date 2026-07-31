@@ -86,11 +86,20 @@ Este arquivo serve para registrar falhas, exceções ou problemas encontrados du
 - Causa: O método interno `_getpagesize()` em `vendor/fpdf/fpdf.php` retornava o vetor em pontos (`595.28`, `841.89`) sem dividir por `$this->k`. Toda vez que `AddPage()` invocava `_beginpage()`, o motor FPDF detectava divergência e redefinia `$this->w` e `$this->h` para `595.28mm` e `841.89mm`, projetando os elementos para fora da página.
 - Solução aplicada: Atualizado o método `_getpagesize()` no `vendor/fpdf/fpdf.php` para retornar o tamanho da página já convertido em milímetros (`[$p[0] / $this->k, $p[1] / $this->k]`), preservando as dimensões A4 padrão (210mm x 297mm).
 
+---
 
+## 2026-07-31 - Execução desprotegida de migrations e reset de admin via HTTP em migrate.php
 
+- Sintoma: O script de infraestrutura `migrate.php` podia ser acessado diretamente por qualquer usuário não autenticado via navegador web e permitia o reset da senha do administrador usando `?reset_admin=1`.
+- Causa: Ausência de verificação de sessão e permissão de Administrador (`AuthHelper::requireAdmin()`) na execução HTTP de `migrate.php`.
+- Solução aplicada: Adicionada a checagem `if (!$isCli) { AuthHelper::requireAdmin(); }` no topo de `migrate.php`.
+- Como evitar no futuro: Garantir que scripts de infraestrutura/migration acessíveis via HTTP exijam sempre autenticação e perfil de Administrador no backend.
 
+---
 
+## 2026-07-31 - Exibição pública de erros técnicos (display_errors = 1 em index.php)
 
-
-
-
+- Sintoma: Risco de exposição de detalhes internos de infraestrutura (caminhos de arquivos, tracebacks, nomes de funções) em tela para o usuário final em caso de erros não capturados.
+- Causa: `ini_set('display_errors', '1');` configurado no ponto de entrada `index.php`.
+- Solução aplicada: Alterado para `ini_set('display_errors', '0');` no `index.php`, mantendo o registro de todos os erros em arquivos protegidos na pasta `logs/` através do `LogHelper`.
+- Como evitar no futuro: Manter a exibição de erros desativada no navegador em ambiente de homologação/produção e utilizar manipuladores genéricos de exceção e logs.

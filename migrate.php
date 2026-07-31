@@ -23,10 +23,15 @@ if (!file_exists($configFile)) {
     exit(1);
 }
 
-require_once $configFile;
-require_once __DIR__ . '/database/migrations/Migration.php';
+require_once __DIR__ . '/app/helpers/AuthHelper.php';
+require_once __DIR__ . '/app/helpers/LogHelper.php';
 
 $isCli = (php_sapi_name() === 'cli');
+
+// Se acessado via web, exige autenticação de Administrador
+if (!$isCli) {
+    AuthHelper::requireAdmin();
+}
 
 try {
     $runner = new MigrationRunner();

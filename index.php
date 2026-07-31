@@ -20,8 +20,8 @@ if (file_exists(__DIR__ . '/config/config.php')) {
     exit('Erro crítico: Arquivo de configuração (config/config.php) não foi encontrado.');
 }
 
-// Configuração de erros
-ini_set('display_errors', '1');
+// Configuração de erros (erros são registrados em logs/ sem expor detalhes técnicos ao usuário)
+ini_set('display_errors', '0');
 error_reporting(E_ALL);
 
 // Carrega utilitários básicos

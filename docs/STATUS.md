@@ -1,8 +1,8 @@
 # Status do Projeto — Finzy
 
 **Última atualização:** 2026-07-31  
-**Fase Atual:** Fase 12 — Relatórios e Exportações (CSV e PDF) — Concluída  
-**Próximo Passo:** Fase 13 — Revisão de Segurança, Qualidade e Validação Final (em chat novo + prompt da próxima fase)
+**Fase Atual:** Fase 13 — Revisão de Segurança, Qualidade e Validação Final — Concluída  
+**Próximo Passo:** chat novo + prompt do passo 6
 
 ---
 
@@ -12,7 +12,7 @@
 - Leitura e análise dos documentos `docs/FSD.md`, `docs/DESIGN.md` e `docs/INSUMOS.md` realizada.
 - `docs/PLANO.md` criado com as 13 fases incrementais detalhadas.
 - `AGENTS.md` criado na raiz do projeto contendo stack, regras de segurança, diretrizes do Design System *Fiscal Precision* e o protocolo dos arquivos vivos com caminhos estritamente relativos.
-- `docs/ERROS.md` mantido sem pendências.
+- `docs/ERROS.md` atualizado com o registro de correções de segurança aplicadas em `migrate.php` e `index.php`.
 - Estrutura base de diretórios, proteções `.htaccess`, ponto de entrada `index.php`, `.gitignore`, `config/config.php` e arquivos base de estilo (`assets/css/app.css` e `assets/js/app.js`) criados e configurados.
 - **Controle de Versão (Git & GitHub):**
   - Repositório Git inicializado e sincronizado na branch `main`.
@@ -37,11 +37,12 @@
 - **Fase 11 — Configurações Gerais e Gerenciamento de Logs (Concluída):**
   - Criados `ConfiguracaoModel.php` e `ConfiguracaoController.php`, expandido `LogHelper.php`, views e rotas de configurações.
 - **Fase 12 — Relatórios e Exportações (CSV e PDF) (Concluída):**
-  - Integrada a biblioteca FPDF 1.86 local em `vendor/fpdf/fpdf.php` e criado o helper `app/helpers/PdfReportHelper.php` estilizado no padrão *Fiscal Precision*.
-  - Adicionados 5 métodos de consulta no `LancamentoModel.php` (`obterSaldoInicialPeriodo`, `obterRelatorioMovimentacoes`, `obterRelatorioDespesasPendentes`, `obterRelatorioReceitasPendentes`, `obterRelatorioResumoCategoria`).
-  - Criado `RelatorioController.php` com suporte aos 4 tipos de relatórios, exportação de CSV nativo em UTF-8 com BOM e separador `;`, e geração de PDF A4.
-  - Criada a View `app/views/relatorios/index.php` com navegação por abas entre os 4 relatórios, filtros por período e atributos, atalhos dinâmicos de período ("Este Mês", "Mês Passado", "Últimos 30 Dias", "Este Ano"), cards de KPIs totalizadores e tabela responsiva.
-  - Atualizado `index.php` com as rotas `relatorios`, `relatorios_exportar_csv` e `relatorios_exportar_pdf`, e atualizado `app/views/layouts/header.php` com o item de menu "Relatórios" acessível a todos os usuários autenticados.
+  - Módulo completo de relatórios e exportações CSV e PDF.
+- **Fase 13 — Revisão de Segurança, Qualidade e Validação Final (Concluída):**
+  - Auditoria completa de segurança realizada em todo o projeto.
+  - Corrigida a vulnerabilidade no `migrate.php` adicionando proteção de autenticação RBAC (`AuthHelper::requireAdmin()`) na execução HTTP.
+  - Ajustado `ini_set('display_errors', '0')` no `index.php` para impedir vazamento de caminhos e detalhes técnicos.
+  - Auditados e validados: Prepared Statements PDO contra SQL Injection, `htmlspecialchars` contra XSS, validação de tokens CSRF em todos os POSTs, cookies de sessão `HttpOnly` e `SameSite=Lax`, expiração por inatividade, hashes bcrypt, proteção de diretórios com `.htaccess` e logs de segurança.
 
 ---
 
@@ -60,17 +61,10 @@
 - [x] **Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5)**
 - [x] **Fase 11 — Configurações Gerais e Gerenciamento de Logs**
 - [x] **Fase 12 — Relatórios e Exportações (CSV e PDF)**
-  - [x] Integrar biblioteca FPDF 1.86 local em `vendor/fpdf/fpdf.php`
-  - [x] Criar `app/helpers/PdfReportHelper.php`
-  - [x] Atualizar `app/models/LancamentoModel.php` com métodos de relatórios
-  - [x] Criar `app/controllers/RelatorioController.php`
-  - [x] Criar View `app/views/relatorios/index.php`
-  - [x] Registrar rotas `relatorios`, `relatorios_exportar_csv` e `relatorios_exportar_pdf` no `index.php`
-  - [x] Adicionar link "Relatórios" na navegação principal em `app/views/layouts/header.php`
-- [ ] **Fase 13 — Revisão de Segurança, Qualidade e Validação Final**
+- [x] **Fase 13 — Revisão de Segurança, Qualidade e Validação Final**
 
 ---
 
 ## Próxima Ação Recomendada
 
-Fase 12 concluída com sucesso! Iniciar a **Fase 13 — Revisão de Segurança, Qualidade e Validação Final** em um novo chat com o prompt da próxima fase.
+Revisão de segurança concluída. Próximo passo: chat novo + prompt do passo 6.
