@@ -29,7 +29,12 @@ class LogHelper {
             $diretorio = "{$baseDir}/{$ano}/{$mes}";
 
             if (!is_dir($diretorio)) {
-                mkdir($diretorio, 0755, true);
+                @mkdir($diretorio, 0777, true);
+                @chmod($diretorio, 0777);
+            }
+
+            if (!is_dir($diretorio) || !is_writable($diretorio)) {
+                return false;
             }
 
             self::garantirProtecaoHtaccess($baseDir);
@@ -65,7 +70,7 @@ class LogHelper {
                 PHP_EOL
             );
 
-            return error_log($linhaLog, 3, $arquivo);
+            return @error_log($linhaLog, 3, $arquivo);
         } catch (Throwable $e) {
             // Em caso de falha na gravação do log, salva no log do sistema nativo PHP
             error_log("Falha ao gravar log no Finzy: " . $e->getMessage());
@@ -86,7 +91,12 @@ class LogHelper {
             $diretorio = "{$baseDir}/security";
 
             if (!is_dir($diretorio)) {
-                mkdir($diretorio, 0755, true);
+                @mkdir($diretorio, 0777, true);
+                @chmod($diretorio, 0777);
+            }
+
+            if (!is_dir($diretorio) || !is_writable($diretorio)) {
+                return false;
             }
 
             self::garantirProtecaoHtaccess($baseDir);
@@ -110,7 +120,7 @@ class LogHelper {
                 PHP_EOL
             );
 
-            return error_log($linhaLog, 3, $arquivo);
+            return @error_log($linhaLog, 3, $arquivo);
         } catch (Throwable $e) {
             error_log("Falha ao gravar log de segurança no Finzy: " . $e->getMessage());
             return false;
