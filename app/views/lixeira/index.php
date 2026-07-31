@@ -177,9 +177,9 @@ require __DIR__ . '/../layouts/header.php';
                                     </button>
 
                                     <!-- Modal de Confirmação de Restauração -->
-                                    <div class="modal fade text-start" id="modalRestaurar<?php echo $item['id']; ?>" tabindex="-1" aria-labelledby="modalRestaurarLabel<?php echo $item['id']; ?>" aria-hidden="true">
+                                    <div class="modal fade text-start" id="modalRestaurar<?php echo $item['id']; ?>" tabindex="-1" aria-labelledby="modalRestaurarLabel<?php echo $item['id']; ?>" aria-hidden="true" style="white-space: normal;">
                                         <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content border-0 shadow">
+                                            <div class="modal-content border-0 shadow" style="white-space: normal;">
                                                 <div class="modal-header bg-light">
                                                     <h5 class="modal-title h6 fw-bold" id="modalRestaurarLabel<?php echo $item['id']; ?>">Confirmar Restauração</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
