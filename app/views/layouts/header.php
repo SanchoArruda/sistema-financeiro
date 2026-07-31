@@ -46,6 +46,11 @@ $routeAtual = $_GET['route'] ?? 'dashboard';
                             Painel Principal
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo in_array($routeAtual, ['lancamentos', 'lancamentos_novo', 'lancamentos_editar'], true) ? 'active fw-bold' : ''; ?>" href="?route=lancamentos">
+                            Lançamentos
+                        </a>
+                    </li>
                     <?php if (AuthHelper::isAdmin()): ?>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle <?php echo in_array($routeAtual, ['categorias', 'formas_pagamento', 'contas'], true) ? 'active fw-bold' : ''; ?>" href="#" id="dropdownCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">

@@ -1,8 +1,8 @@
 # Status do Projeto — Finzy
 
 **Última atualização:** 2026-07-31  
-**Fase Atual:** Fase 7 — Gestão de Usuários e Auto-gestão de Perfil — Concluída  
-**Próximo Passo:** Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete) (em chat novo + prompt da próxima fase)
+**Fase Atual:** Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete) — Concluída  
+**Próximo Passo:** Fase 9 — Lixeira (Consulta e Restauração por Perfil) (em chat novo + prompt da próxima fase)
 
 ---
 
@@ -27,12 +27,14 @@
 - **Fase 6 — Cadastros Básicos (Categorias, Formas de Pagamento e Contas) (Concluída):**
   - CRUD completo de Categorias, Formas de Pagamento e Contas Financeiras com cálculo dinâmico de saldo atual.
 - **Fase 7 — Gestão de Usuários e Auto-gestão de Perfil (Concluída):**
-  - Expansão de `UsuarioModel.php` com métodos de listagem filtrada (busca por nome/email, perfil e status), checagem de e-mail único, criação com hash bcrypt, edição de dados e alternância de status, além de atualização de perfil próprio.
-  - Criação de `UsuarioController.php` contendo actions para listar, salvar, alternar status (com RBAC backend e bloqueio rigoroso de auto-inativação e auto-rebaixamento) e auto-gestão de perfil.
-  - Criação da View `app/views/usuarios/index.php` (Gestão de Usuários para Administrador) com busca, filtros por perfil/status, tabela de usuários com badges e auditoria, e modal inline de cadastro/edição.
-  - Criação da View `app/views/usuarios/meu_perfil.php` (Auto-gestão de Perfil para Administrador e Operador) com alteração de nome e senha mediante confirmação obrigatória da senha atual.
-  - Atualização do layout `app/views/layouts/header.php` adicionando links "Gestão de Usuários" (Administrador) e "Meu Perfil" (Todos os usuários conectados).
-  - Atualização do roteador `index.php` com inclusão do `UsuarioController.php` e registro das 5 novas rotas protegidas (`usuarios`, `usuarios_salvar`, `usuarios_status`, `meu_perfil`, `salvar_meu_perfil`).
+  - Gestão completa de Usuários (Administrador) e Auto-gestão de Perfil (Todos) com proteção de segurança e troca de senha.
+- **Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete) (Concluída):**
+  - Criação de `LancamentoModel.php` com suporte a listagem filtrada (busca, período, tipo, categoria, conta, forma de pagamento, situação derivada e criador), contagem filtrada, soma de totais do filtro, cadastro, edição e soft delete (`excluido_em` / `excluido_por`).
+  - Criação de `LancamentoController.php` contendo as actions `index`, `novo`, `editar`, `salvar` e `excluir`, com RBAC autorizando Administradores e Operadores, validação CSRF e logs de segurança.
+  - Criação da View `app/views/lancamentos/index.php` com 4 cards de KPIs financeiros do filtro, tabela responsiva com badges de tipo/situação (Realizado, Pendente e Em Atraso em destaque vermelho), paginação de 20 registros e modal de confirmação de exclusão lógica.
+  - Criação da View `app/views/lancamentos/form.php` (criação e edição) com filtragem dinamica nativa em JavaScript do select de categorias baseando-se no tipo selecionado (Receita / Despesa) e suporte à RN05.
+  - Atualização do menu `app/views/layouts/header.php` adicionando o link "Lançamentos" para todos os usuários autenticados.
+  - Registro de `LancamentoController.php` e das 5 rotas de lançamentos no Front Controller `index.php`.
 
 ---
 
@@ -46,13 +48,13 @@
 - [x] **Fase 5 — Controle de Acesso (RBAC) e Sistema de Logs**
 - [x] **Fase 6 — Cadastros Básicos (Categorias, Formas de Pagamento e Contas)**
 - [x] **Fase 7 — Gestão de Usuários e Auto-gestão de Perfil**
-  - [x] Expandir `app/models/UsuarioModel.php`
-  - [x] Criar `app/controllers/UsuarioController.php`
-  - [x] Criar `app/views/usuarios/index.php`
-  - [x] Criar `app/views/usuarios/meu_perfil.php`
-  - [x] Atualizar `app/views/layouts/header.php`
+- [x] **Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete)**
+  - [x] Criar `app/models/LancamentoModel.php`
+  - [x] Criar `app/controllers/LancamentoController.php`
+  - [x] Criar `app/views/lancamentos/index.php`
+  - [x] Criar `app/views/lancamentos/form.php`
+  - [x] Atualizar `app/views/layouts/header.php` com o link Lançamentos
   - [x] Atualizar `index.php` com as 5 novas rotas protegidas
-- [ ] **Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete)**
 - [ ] **Fase 9 — Lixeira (Consulta e Restauração por Perfil)**
 - [ ] **Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5)**
 - [ ] **Fase 11 — Configurações Gerais e Gerenciamento de Logs**
@@ -63,4 +65,4 @@
 
 ## Próxima Ação Recomendada
 
-Fase 7 concluída com sucesso! Iniciar a **Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete)** em um novo chat com o prompt da próxima fase.
+Fase 8 concluída com sucesso! Iniciar a **Fase 9 — Lixeira (Consulta e Restauração por Perfil)** em um novo chat com o prompt da próxima fase.

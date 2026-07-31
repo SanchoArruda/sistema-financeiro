@@ -36,6 +36,7 @@ require_once __DIR__ . '/app/controllers/CategoriaController.php';
 require_once __DIR__ . '/app/controllers/FormaPagamentoController.php';
 require_once __DIR__ . '/app/controllers/ContaController.php';
 require_once __DIR__ . '/app/controllers/UsuarioController.php';
+require_once __DIR__ . '/app/controllers/LancamentoController.php';
 
 // Configuração de manipuladores globais de erros e exceções
 set_exception_handler(function (Throwable $e) {
@@ -212,6 +213,27 @@ switch ($route) {
 
     case 'salvar_meu_perfil':
         (new UsuarioController())->salvarMeuPerfil();
+        break;
+
+    // Rotas de Lançamentos Financeiros (Fase 8)
+    case 'lancamentos':
+        (new LancamentoController())->index();
+        break;
+
+    case 'lancamentos_novo':
+        (new LancamentoController())->novo();
+        break;
+
+    case 'lancamentos_editar':
+        (new LancamentoController())->editar();
+        break;
+
+    case 'lancamentos_salvar':
+        (new LancamentoController())->salvar();
+        break;
+
+    case 'lancamentos_excluir':
+        (new LancamentoController())->excluir();
         break;
 
     default:
