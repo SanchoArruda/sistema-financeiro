@@ -1,8 +1,8 @@
 # Status do Projeto — Finzy
 
 **Última atualização:** 2026-07-31  
-**Fase Atual:** Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete) — Concluída  
-**Próximo Passo:** Fase 9 — Lixeira (Consulta e Restauração por Perfil) (em chat novo + prompt da próxima fase)
+**Fase Atual:** Fase 9 — Lixeira (Consulta e Restauração por Perfil) — Concluída  
+**Próximo Passo:** Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5) (em chat novo + prompt da próxima fase)
 
 ---
 
@@ -29,12 +29,13 @@
 - **Fase 7 — Gestão de Usuários e Auto-gestão de Perfil (Concluída):**
   - Gestão completa de Usuários (Administrador) e Auto-gestão de Perfil (Todos) com proteção de segurança e troca de senha.
 - **Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete) (Concluída):**
-  - Criação de `LancamentoModel.php` com suporte a listagem filtrada (busca, período, tipo, categoria, conta, forma de pagamento, situação derivada e criador), contagem filtrada, soma de totais do filtro, cadastro, edição e soft delete (`excluido_em` / `excluido_por`).
-  - Criação de `LancamentoController.php` contendo as actions `index`, `novo`, `editar`, `salvar` e `excluir`, com RBAC autorizando Administradores e Operadores, validação CSRF e logs de segurança.
-  - Criação da View `app/views/lancamentos/index.php` com 4 cards de KPIs financeiros do filtro, tabela responsiva com badges de tipo/situação (Realizado, Pendente e Em Atraso em destaque vermelho), paginação de 20 registros e modal de confirmação de exclusão lógica.
-  - Criação da View `app/views/lancamentos/form.php` (criação e edição) com filtragem dinamica nativa em JavaScript do select de categorias baseando-se no tipo selecionado (Receita / Despesa) e suporte à RN05.
-  - Atualização do menu `app/views/layouts/header.php` adicionando o link "Lançamentos" para todos os usuários autenticados.
-  - Registro de `LancamentoController.php` e das 5 rotas de lançamentos no Front Controller `index.php`.
+  - Criação de `LancamentoModel.php`, `LancamentoController.php` e views de lançamentos com paginação, filtros e soft delete.
+- **Fase 9 — Lixeira (Consulta e Restauração por Perfil) (Concluída):**
+  - Adicionados métodos no `LancamentoModel.php` (`listarLixeira`, `contarLixeira`, `buscarExcluidoPorId`, `restaurar`).
+  - Criado `LixeiraController.php` com suporte a listagem filtrada por perfil (Administrador vs Operador) e action de restauração com validação de CSRF, RBAC e autoria da exclusão.
+  - Criada a View `app/views/lixeira/index.php` seguindo o Design System *Fiscal Precision* com tabela responsiva, estado vazio com atalho e modais de confirmação de restauração.
+  - Atualizado o header (`app/views/layouts/header.php`) adicionando o link da Lixeira no menu de navegação.
+  - Registradas as rotas `lixeira` e `lixeira_restaurar` no Front Controller `index.php`.
 
 ---
 
@@ -49,13 +50,12 @@
 - [x] **Fase 6 — Cadastros Básicos (Categorias, Formas de Pagamento e Contas)**
 - [x] **Fase 7 — Gestão de Usuários e Auto-gestão de Perfil**
 - [x] **Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete)**
-  - [x] Criar `app/models/LancamentoModel.php`
-  - [x] Criar `app/controllers/LancamentoController.php`
-  - [x] Criar `app/views/lancamentos/index.php`
-  - [x] Criar `app/views/lancamentos/form.php`
-  - [x] Atualizar `app/views/layouts/header.php` com o link Lançamentos
-  - [x] Atualizar `index.php` com as 5 novas rotas protegidas
-- [ ] **Fase 9 — Lixeira (Consulta e Restauração por Perfil)**
+- [x] **Fase 9 — Lixeira (Consulta e Restauração por Perfil)**
+  - [x] Atualizar `app/models/LancamentoModel.php` com métodos da lixeira
+  - [x] Criar `app/controllers/LixeiraController.php`
+  - [x] Criar `app/views/lixeira/index.php`
+  - [x] Atualizar `app/views/layouts/header.php` com o link Lixeira
+  - [x] Atualizar `index.php` com as rotas `lixeira` e `lixeira_restaurar`
 - [ ] **Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5)**
 - [ ] **Fase 11 — Configurações Gerais e Gerenciamento de Logs**
 - [ ] **Fase 12 — Relatórios e Exportações (CSV e PDF)**
@@ -65,4 +65,4 @@
 
 ## Próxima Ação Recomendada
 
-Fase 8 concluída com sucesso! Iniciar a **Fase 9 — Lixeira (Consulta e Restauração por Perfil)** em um novo chat com o prompt da próxima fase.
+Fase 9 concluída com sucesso! Iniciar a **Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5)** em um novo chat com o prompt da próxima fase.

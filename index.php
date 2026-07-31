@@ -37,6 +37,7 @@ require_once __DIR__ . '/app/controllers/FormaPagamentoController.php';
 require_once __DIR__ . '/app/controllers/ContaController.php';
 require_once __DIR__ . '/app/controllers/UsuarioController.php';
 require_once __DIR__ . '/app/controllers/LancamentoController.php';
+require_once __DIR__ . '/app/controllers/LixeiraController.php';
 
 // Configuração de manipuladores globais de erros e exceções
 set_exception_handler(function (Throwable $e) {
@@ -234,6 +235,15 @@ switch ($route) {
 
     case 'lancamentos_excluir':
         (new LancamentoController())->excluir();
+        break;
+
+    // Rotas da Lixeira (Fase 9)
+    case 'lixeira':
+        (new LixeiraController())->index();
+        break;
+
+    case 'lixeira_restaurar':
+        (new LixeiraController())->restaurar();
         break;
 
     default:

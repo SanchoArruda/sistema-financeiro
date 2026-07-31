@@ -327,4 +327,147 @@ class LancamentoModel {
 
         return $stmt->execute();
     }
+
+    /**
+     * Lista lançamentos na Lixeira (excluido_em IS NOT NULL) com suporte a filtro por perfil.
+     * Administrador visualiza todos; Operador visualiza apenas os excluídos por ele próprio.
+     * 
+     * @param array $filtros Array podendo conter 'excluido_por' (int), 'busca' (string)
+     * @param int $pagina
+     * @param int $porPagina
+     * @return array
+     */
+    public function listarLixeira(array $filtros = [], int $pagina = 1, int $porPagina = 20): array {
+        $pdo = Database::getConnection();
+
+        $where = " WHERE l.excluido_em IS NOT NULL";
+        $params = [];
+
+        // Filtro de visibilidade por perfil (Operador vê apenas excluido_por)
+        if (!empty($filtros['excluido_por']) && (int)$filtros['excluido_por'] > 0) {
+            $where .= " AND l.excluido_por = :excluido_por";
+            $params[':excluido_por'] = (int)$filtros['excluido_por'];
+        }
+
+        // Busca por palavra-chave na descrição
+        if (!empty($filtros['busca'])) {
+            $where .= " AND l.descricao LIKE :busca";
+            $params[':busca'] = '%' . trim($filtros['busca']) . '%';
+        }
+
+        $offset = max(0, ($pagina - 1) * $porPagina);
+
+        $sql = "SELECT l.*,
+                       cat.nome AS categoria_nome,
+                       cnt.nome AS conta_nome,
+                       fpg.nome AS forma_pagamento_nome,
+                       uc.nome AS criador_nome,
+                       ue.nome AS excluidor_nome
+                FROM lancamentos l
+                INNER JOIN categorias cat ON l.categoria_id = cat.id
+                INNER JOIN contas cnt ON l.conta_id = cnt.id
+                INNER JOIN formas_pagamento fpg ON l.forma_pagamento_id = fpg.id
+                INNER JOIN usuarios uc ON l.criado_por = uc.id
+                LEFT JOIN usuarios ue ON l.excluido_por = ue.id
+                {$where}
+                ORDER BY l.excluido_em DESC, l.id DESC
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = $pdo->prepare($sql);
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k, $v);
+        }
+        $stmt->bindValue(':limit', $porPagina, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll() ?: [];
+    }
+
+    /**
+     * Retorna a contagem total de lançamentos na lixeira conforme os filtros.
+     * 
+     * @param array $filtros
+     * @return int
+     */
+    public function contarLixeira(array $filtros = []): int {
+        $pdo = Database::getConnection();
+
+        $where = " WHERE l.excluido_em IS NOT NULL";
+        $params = [];
+
+        if (!empty($filtros['excluido_por']) && (int)$filtros['excluido_por'] > 0) {
+            $where .= " AND l.excluido_por = :excluido_por";
+            $params[':excluido_por'] = (int)$filtros['excluido_por'];
+        }
+
+        if (!empty($filtros['busca'])) {
+            $where .= " AND l.descricao LIKE :busca";
+            $params[':busca'] = '%' . trim($filtros['busca']) . '%';
+        }
+
+        $sql = "SELECT COUNT(l.id) AS total FROM lancamentos l {$where}";
+
+        $stmt = $pdo->prepare($sql);
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k, $v);
+        }
+        $stmt->execute();
+
+        $res = $stmt->fetch();
+        return (int) ($res['total'] ?? 0);
+    }
+
+    /**
+     * Busca um lançamento excluído pelo ID.
+     * 
+     * @param int $id
+     * @return array|null
+     */
+    public function buscarExcluidoPorId(int $id): ?array {
+        $pdo = Database::getConnection();
+
+        $sql = "SELECT l.*,
+                       cat.nome AS categoria_nome,
+                       cnt.nome AS conta_nome,
+                       fpg.nome AS forma_pagamento_nome,
+                       uc.nome AS criador_nome,
+                       ue.nome AS excluidor_nome
+                FROM lancamentos l
+                INNER JOIN categorias cat ON l.categoria_id = cat.id
+                INNER JOIN contas cnt ON l.conta_id = cnt.id
+                INNER JOIN formas_pagamento fpg ON l.forma_pagamento_id = fpg.id
+                INNER JOIN usuarios uc ON l.criado_por = uc.id
+                LEFT JOIN usuarios ue ON l.excluido_por = ue.id
+                WHERE l.id = :id AND l.excluido_em IS NOT NULL
+                LIMIT 1";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $res = $stmt->fetch();
+        return $res ?: null;
+    }
+
+    /**
+     * Restaura um lançamento excluído, definindo excluido_em e excluido_por como NULL.
+     * 
+     * @param int $id
+     * @return bool
+     */
+    public function restaurar(int $id): bool {
+        $pdo = Database::getConnection();
+
+        $sql = "UPDATE lancamentos
+                SET excluido_em = NULL,
+                    excluido_por = NULL
+                WHERE id = :id AND excluido_em IS NOT NULL";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
 }
+

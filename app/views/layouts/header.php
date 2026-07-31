@@ -51,6 +51,11 @@ $routeAtual = $_GET['route'] ?? 'dashboard';
                             Lançamentos
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo $routeAtual === 'lixeira' ? 'active fw-bold' : ''; ?>" href="?route=lixeira">
+                            Lixeira
+                        </a>
+                    </li>
                     <?php if (AuthHelper::isAdmin()): ?>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle <?php echo in_array($routeAtual, ['categorias', 'formas_pagamento', 'contas'], true) ? 'active fw-bold' : ''; ?>" href="#" id="dropdownCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
