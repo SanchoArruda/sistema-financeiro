@@ -57,16 +57,30 @@ $routeAtual = $_GET['route'] ?? 'dashboard';
                                 <li><a class="dropdown-item <?php echo $routeAtual === 'contas' ? 'active' : ''; ?>" href="?route=contas">Contas Financeiras</a></li>
                             </ul>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo $routeAtual === 'usuarios' ? 'active fw-bold' : ''; ?>" href="?route=usuarios">
+                                Gestão de Usuários
+                            </a>
+                        </li>
                     <?php endif; ?>
                 </ul>
 
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-white text-end d-none d-sm-block">
-                        <div class="fw-semibold small"><?php echo htmlspecialchars($usuarioLogado['nome'] ?? '', ENT_QUOTES, 'UTF-8'); ?></div>
-                        <span class="badge bg-secondary opacity-75 text-uppercase" style="font-size: 0.65rem;">
-                            <?php echo htmlspecialchars($usuarioLogado['perfil'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
-                        </span>
+                        <a href="?route=meu_perfil" class="text-white text-decoration-none" title="Ver Meu Perfil">
+                            <div class="fw-semibold small"><?php echo htmlspecialchars($usuarioLogado['nome'] ?? '', ENT_QUOTES, 'UTF-8'); ?></div>
+                            <span class="badge bg-secondary opacity-75 text-uppercase" style="font-size: 0.65rem;">
+                                <?php echo htmlspecialchars($usuarioLogado['perfil'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                            </span>
+                        </a>
                     </div>
+                    <a href="?route=meu_perfil" class="btn btn-outline-light btn-sm px-3 d-flex align-items-center gap-1 <?php echo $routeAtual === 'meu_perfil' ? 'active fw-bold' : ''; ?>" title="Meu Perfil">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                        </svg>
+                        Meu Perfil
+                    </a>
                     <a href="?route=logout" class="btn btn-outline-light btn-sm px-3">Sair</a>
                 </div>
             </div>

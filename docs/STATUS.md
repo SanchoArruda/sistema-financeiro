@@ -1,8 +1,8 @@
 # Status do Projeto — Finzy
 
 **Última atualização:** 2026-07-31  
-**Fase Atual:** Fase 6 — Cadastros Básicos (Categorias, Formas de Pagamento e Contas) — Concluída  
-**Próximo Passo:** Fase 7 — Gestão de Usuários e Auto-gestão de Perfil (em chat novo + prompt da próxima fase)
+**Fase Atual:** Fase 7 — Gestão de Usuários e Auto-gestão de Perfil — Concluída  
+**Próximo Passo:** Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete) (em chat novo + prompt da próxima fase)
 
 ---
 
@@ -25,12 +25,14 @@
 - **Fase 5 — Controle de Acesso (RBAC) e Sistema de Logs (Concluída):**
   - Helper de Logs (`app/helpers/LogHelper.php`), RBAC em `AuthHelper.php`, View de Acesso Negado e manipuladores globais em `index.php`.
 - **Fase 6 — Cadastros Básicos (Categorias, Formas de Pagamento e Contas) (Concluída):**
-  - Helper de Formatação (`app/helpers/FormatHelper.php`) para moeda R$, datas no padrão brasileiro e badges de status.
-  - CRUD completo de Categorias (`CategoriaModel.php`, `CategoriaController.php`, `app/views/categorias/index.php`) com filtro por busca, tipo e status, validação de nome duplicado por tipo e auditoria.
-  - CRUD completo de Formas de Pagamento (`FormaPagamentoModel.php`, `FormaPagamentoController.php`, `app/views/formas_pagamento/index.php`) com filtro por busca e status, validação de duplicidade e auditoria.
-  - CRUD completo de Contas Financeiras (`ContaModel.php`, `ContaController.php`, `app/views/contas/index.php`) com cálculo dinâmico de `Saldo Atual = Saldo Inicial + Σ Receitas Realizadas - Σ Despesas Realizadas`, filtro por busca, tipo de conta e status, além de auditoria.
-  - Layouts base `app/views/layouts/header.php` e `app/views/layouts/footer.php` criados com o Design System *Fiscal Precision*, menu dropdown responsivo para Cadastros Básicos e atalhos no Dashboard.
-  - Roteamento configurado em `index.php` protegendo todas as rotas de Cadastros Básicos para acesso exclusivo do perfil Administrador via RBAC backend.
+  - CRUD completo de Categorias, Formas de Pagamento e Contas Financeiras com cálculo dinâmico de saldo atual.
+- **Fase 7 — Gestão de Usuários e Auto-gestão de Perfil (Concluída):**
+  - Expansão de `UsuarioModel.php` com métodos de listagem filtrada (busca por nome/email, perfil e status), checagem de e-mail único, criação com hash bcrypt, edição de dados e alternância de status, além de atualização de perfil próprio.
+  - Criação de `UsuarioController.php` contendo actions para listar, salvar, alternar status (com RBAC backend e bloqueio rigoroso de auto-inativação e auto-rebaixamento) e auto-gestão de perfil.
+  - Criação da View `app/views/usuarios/index.php` (Gestão de Usuários para Administrador) com busca, filtros por perfil/status, tabela de usuários com badges e auditoria, e modal inline de cadastro/edição.
+  - Criação da View `app/views/usuarios/meu_perfil.php` (Auto-gestão de Perfil para Administrador e Operador) com alteração de nome e senha mediante confirmação obrigatória da senha atual.
+  - Atualização do layout `app/views/layouts/header.php` adicionando links "Gestão de Usuários" (Administrador) e "Meu Perfil" (Todos os usuários conectados).
+  - Atualização do roteador `index.php` com inclusão do `UsuarioController.php` e registro das 5 novas rotas protegidas (`usuarios`, `usuarios_salvar`, `usuarios_status`, `meu_perfil`, `salvar_meu_perfil`).
 
 ---
 
@@ -43,17 +45,13 @@
 - [x] **Fase 4 — Recuperação de Senha por E-mail**
 - [x] **Fase 5 — Controle de Acesso (RBAC) e Sistema de Logs**
 - [x] **Fase 6 — Cadastros Básicos (Categorias, Formas de Pagamento e Contas)**
-  - [x] Criar `app/helpers/FormatHelper.php`
-  - [x] Criar `app/models/CategoriaModel.php` e `app/controllers/CategoriaController.php`
-  - [x] Criar `app/views/categorias/index.php`
-  - [x] Criar `app/models/FormaPagamentoModel.php` e `app/controllers/FormaPagamentoController.php`
-  - [x] Criar `app/views/formas_pagamento/index.php`
-  - [x] Criar `app/models/ContaModel.php` e `app/controllers/ContaController.php`
-  - [x] Criar `app/views/contas/index.php`
-  - [x] Criar `app/views/layouts/header.php` e `app/views/layouts/footer.php`
-  - [x] Atualizar `app/views/dashboard/index.php`
-  - [x] Atualizar `index.php` com as 9 novas rotas protegidas por RBAC
-- [ ] **Fase 7 — Gestão de Usuários e Auto-gestão de Perfil**
+- [x] **Fase 7 — Gestão de Usuários e Auto-gestão de Perfil**
+  - [x] Expandir `app/models/UsuarioModel.php`
+  - [x] Criar `app/controllers/UsuarioController.php`
+  - [x] Criar `app/views/usuarios/index.php`
+  - [x] Criar `app/views/usuarios/meu_perfil.php`
+  - [x] Atualizar `app/views/layouts/header.php`
+  - [x] Atualizar `index.php` com as 5 novas rotas protegidas
 - [ ] **Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete)**
 - [ ] **Fase 9 — Lixeira (Consulta e Restauração por Perfil)**
 - [ ] **Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5)**
@@ -65,4 +63,4 @@
 
 ## Próxima Ação Recomendada
 
-Fase 6 concluída com sucesso! Iniciar a **Fase 7 — Gestão de Usuários e Auto-gestão de Perfil** em um novo chat com o prompt da próxima fase.
+Fase 7 concluída com sucesso! Iniciar a **Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete)** em um novo chat com o prompt da próxima fase.

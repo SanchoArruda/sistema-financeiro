@@ -35,6 +35,7 @@ require_once __DIR__ . '/app/controllers/AuthController.php';
 require_once __DIR__ . '/app/controllers/CategoriaController.php';
 require_once __DIR__ . '/app/controllers/FormaPagamentoController.php';
 require_once __DIR__ . '/app/controllers/ContaController.php';
+require_once __DIR__ . '/app/controllers/UsuarioController.php';
 
 // Configuração de manipuladores globais de erros e exceções
 set_exception_handler(function (Throwable $e) {
@@ -190,6 +191,27 @@ switch ($route) {
 
     case 'contas_status':
         (new ContaController())->alternarStatus();
+        break;
+
+    // Rotas da Gestão de Usuários e Auto-gestão de Perfil (Fase 7)
+    case 'usuarios':
+        (new UsuarioController())->index();
+        break;
+
+    case 'usuarios_salvar':
+        (new UsuarioController())->salvar();
+        break;
+
+    case 'usuarios_status':
+        (new UsuarioController())->alternarStatus();
+        break;
+
+    case 'meu_perfil':
+        (new UsuarioController())->meuPerfil();
+        break;
+
+    case 'salvar_meu_perfil':
+        (new UsuarioController())->salvarMeuPerfil();
         break;
 
     default:
