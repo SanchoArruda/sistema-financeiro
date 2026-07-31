@@ -108,7 +108,7 @@ aside.app-sidebar,
   display: flex !important;
   flex-direction: column !important;
   flex-shrink: 0 !important;
-  transition: all 0.3s ease-in-out;
+  transition: width 0.3s ease, min-width 0.3s ease, max-width 0.3s ease, left 0.3s ease;
   z-index: 1040;
 }
 
@@ -177,6 +177,49 @@ aside.app-sidebar,
 .app-sidebar .sidebar-nav .nav-link.active svg {
   opacity: 1 !important;
   color: #60a5fa !important;
+}
+
+/* Sidebar Retrátil / Comprimida (Icon-Only Mode) */
+@media (min-width: 992px) {
+  aside.app-sidebar.collapsed,
+  .app-sidebar.collapsed {
+    width: 70px !important;
+    min-width: 70px !important;
+    max-width: 70px !important;
+  }
+
+  aside.app-sidebar.collapsed a.sidebar-brand,
+  .app-sidebar.collapsed a.sidebar-brand {
+    justify-content: center !important;
+    padding: 0 !important;
+  }
+
+  aside.app-sidebar.collapsed a.sidebar-brand span,
+  .app-sidebar.collapsed a.sidebar-brand span {
+    display: none !important;
+  }
+
+  aside.app-sidebar.collapsed a.sidebar-brand svg,
+  .app-sidebar.collapsed a.sidebar-brand svg {
+    margin-right: 0 !important;
+  }
+
+  aside.app-sidebar.collapsed .sidebar-nav .nav-section-title,
+  .app-sidebar.collapsed .sidebar-nav .nav-section-title {
+    display: none !important;
+  }
+
+  aside.app-sidebar.collapsed .sidebar-nav a.nav-link,
+  .app-sidebar.collapsed .sidebar-nav .nav-link {
+    justify-content: center !important;
+    padding: 0.75rem 0 !important;
+    gap: 0 !important;
+  }
+
+  aside.app-sidebar.collapsed .sidebar-nav a.nav-link span,
+  .app-sidebar.collapsed .sidebar-nav .nav-link span {
+    display: none !important;
+  }
 }
 
 .app-main {

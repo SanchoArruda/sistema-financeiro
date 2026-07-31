@@ -39,7 +39,7 @@ $isActive = function(array $routes) use ($routeAtual): string {
         <!-- Sidebar Lateral Escura (Dark Navy Sidebar) -->
         <aside class="app-sidebar" id="appSidebar">
             <!-- Brand Logo -->
-            <a href="?route=dashboard" class="sidebar-brand">
+            <a href="?route=dashboard" class="sidebar-brand" title="Finzy — Início">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-wallet2 text-info me-2" viewBox="0 0 16 16">
                     <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5z"/>
                 </svg>
@@ -50,22 +50,22 @@ $isActive = function(array $routes) use ($routeAtual): string {
             <nav class="sidebar-nav">
                 <div class="nav-section-title">Menu Principal</div>
 
-                <a href="?route=dashboard" class="nav-link <?php echo $isActive(['dashboard']); ?>">
+                <a href="?route=dashboard" class="nav-link <?php echo $isActive(['dashboard']); ?>" title="Dashboard">
                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                     <span>Dashboard</span>
                 </a>
 
-                <a href="?route=lancamentos" class="nav-link <?php echo $isActive(['lancamentos', 'lancamentos_novo', 'lancamentos_editar']); ?>">
+                <a href="?route=lancamentos" class="nav-link <?php echo $isActive(['lancamentos', 'lancamentos_novo', 'lancamentos_editar']); ?>" title="Lançamentos">
                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
                     <span>Lançamentos</span>
                 </a>
 
-                <a href="?route=relatorios" class="nav-link <?php echo $isActive(['relatorios', 'relatorios_exportar_csv', 'relatorios_exportar_pdf']); ?>">
+                <a href="?route=relatorios" class="nav-link <?php echo $isActive(['relatorios', 'relatorios_exportar_csv', 'relatorios_exportar_pdf']); ?>" title="Relatórios">
                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
                     <span>Relatórios</span>
                 </a>
 
-                <a href="?route=lixeira" class="nav-link <?php echo $isActive(['lixeira']); ?>">
+                <a href="?route=lixeira" class="nav-link <?php echo $isActive(['lixeira']); ?>" title="Lixeira">
                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
                     <span>Lixeira</span>
                 </a>
@@ -73,29 +73,29 @@ $isActive = function(array $routes) use ($routeAtual): string {
                 <?php if (AuthHelper::isAdmin()): ?>
                     <div class="nav-section-title">Cadastros Básicos</div>
 
-                    <a href="?route=categorias" class="nav-link <?php echo $isActive(['categorias', 'categorias_novo', 'categorias_editar']); ?>">
+                    <a href="?route=categorias" class="nav-link <?php echo $isActive(['categorias', 'categorias_novo', 'categorias_editar']); ?>" title="Categorias">
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
                         <span>Categorias</span>
                     </a>
 
-                    <a href="?route=formas_pagamento" class="nav-link <?php echo $isActive(['formas_pagamento', 'formas_pagamento_novo', 'formas_pagamento_editar']); ?>">
+                    <a href="?route=formas_pagamento" class="nav-link <?php echo $isActive(['formas_pagamento', 'formas_pagamento_novo', 'formas_pagamento_editar']); ?>" title="Formas de Pagamento">
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
                         <span>Formas de Pagamento</span>
                     </a>
 
-                    <a href="?route=contas" class="nav-link <?php echo $isActive(['contas', 'contas_novo', 'contas_editar']); ?>">
+                    <a href="?route=contas" class="nav-link <?php echo $isActive(['contas', 'contas_novo', 'contas_editar']); ?>" title="Contas Financeiras">
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg>
                         <span>Contas Financeiras</span>
                     </a>
 
                     <div class="nav-section-title">Administração</div>
 
-                    <a href="?route=usuarios" class="nav-link <?php echo $isActive(['usuarios', 'usuarios_novo', 'usuarios_editar']); ?>">
+                    <a href="?route=usuarios" class="nav-link <?php echo $isActive(['usuarios', 'usuarios_novo', 'usuarios_editar']); ?>" title="Gestão de Usuários">
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
                         <span>Gestão de Usuários</span>
                     </a>
 
-                    <a href="?route=configuracoes" class="nav-link <?php echo $isActive(['configuracoes']); ?>">
+                    <a href="?route=configuracoes" class="nav-link <?php echo $isActive(['configuracoes']); ?>" title="Configurações">
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
                         <span>Configurações</span>
                     </a>

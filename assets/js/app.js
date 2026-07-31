@@ -10,11 +10,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const appSidebar = document.getElementById('appSidebar');
     const sidebarBackdrop = document.getElementById('sidebarBackdrop');
 
+    // Restaura o estado salvo da sidebar retrátil no desktop
+    if (appSidebar && window.innerWidth >= 992) {
+        const isCollapsed = localStorage.getItem('finzy_sidebar_collapsed') === 'true';
+        if (isCollapsed) {
+            appSidebar.classList.add('collapsed');
+        }
+    }
+
     if (sidebarToggle && appSidebar) {
         sidebarToggle.addEventListener('click', () => {
-            appSidebar.classList.toggle('show');
-            if (sidebarBackdrop) {
-                sidebarBackdrop.classList.toggle('show');
+            if (window.innerWidth >= 992) {
+                // Desktop: comprime / expande a barra lateral
+                appSidebar.classList.toggle('collapsed');
+                const isCollapsed = appSidebar.classList.contains('collapsed');
+                localStorage.setItem('finzy_sidebar_collapsed', isCollapsed ? 'true' : 'false');
+            } else {
+                // Mobile: exibe / oculta a barra lateral overlay
+                appSidebar.classList.toggle('show');
+                if (sidebarBackdrop) {
+                    sidebarBackdrop.classList.toggle('show');
+                }
             }
         });
     }
