@@ -27,6 +27,13 @@ class FormatHelper {
     }
 
     /**
+     * Alias para moeda()
+     */
+    public static function formatarMoeda(float|int|string|null $valor): string {
+        return self::moeda($valor);
+    }
+
+    /**
      * Converte um valor formatado (ex: "1.250,50" ou "1250.50") em float limpo para banco de dados.
      * 
      * @param string|float|int|null $valor
@@ -71,6 +78,13 @@ class FormatHelper {
             return '-';
         }
         return date('d/m/Y', $timestamp);
+    }
+
+    /**
+     * Alias para data()
+     */
+    public static function formatarData(?string $data): string {
+        return self::data($data);
     }
 
     /**
