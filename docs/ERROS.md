@@ -57,7 +57,13 @@ Este arquivo serve para registrar falhas, exceções ou problemas encontrados du
 - Sintoma: Tela de erro amigável "Ocorreu um erro inesperado" exibida ao tentar exportar o relatório em PDF.
 - Causa: A classe `PdfReportHelper` (herdando de FPDF) invocava `$this->SetXY()`, porém o método `SetXY($x, $y)` não estava presente no motor `vendor/fpdf/fpdf.php`.
 - Solução aplicada: Adicionado o método público `SetXY($x, $y)` na classe `FPDF` em `vendor/fpdf/fpdf.php`.
-- Como evitar no futuro: Garantir a presença de todos os métodos utilitários de posicionamento (`SetX`, `SetY`, `SetXY`) na classe FPDF base.
+## 2026-07-31 - PDF gerado em branco (ausência de definição de fonte no bloco BT...ET)
+
+- Sintoma: O arquivo PDF gerado era baixado/exibido com visualização de página inteiramente em branco.
+- Causa: Os métodos `Cell()` e `Text()` em `vendor/fpdf/fpdf.php` abriam novos blocos de texto no PDF (`BT ... ET`) sem incluir o operador de seleção de fonte `/F%d %.2F Tf` dentro de cada bloco. Com isso, leitores de PDF desconsideravam os caracteres de texto por falta de fonte ativa no escopo do objeto de texto.
+- Solução aplicada: Adicionado `/F%d %.2F Tf` no formato de string dos métodos `Cell()` e `Text()` no `vendor/fpdf/fpdf.php`.
+- Como evitar no futuro: Garantir que todo operador `BT` em geradores PDF selecione explicitamente a fonte (`/F... Tf`) antes das instruções `Td` e `Tj`.
+
 
 
 
