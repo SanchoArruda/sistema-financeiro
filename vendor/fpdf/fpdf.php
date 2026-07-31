@@ -115,12 +115,12 @@ class FPDF {
         $orientation = strtolower($orientation);
         if ($orientation === 'p' || $orientation === 'portrait') {
             $this->DefOrientation = 'P';
-            $this->w = $size[0] / $this->k;
-            $this->h = $size[1] / $this->k;
+            $this->w = $size[0];
+            $this->h = $size[1];
         } elseif ($orientation === 'l' || $orientation === 'landscape') {
             $this->DefOrientation = 'L';
-            $this->w = $size[1] / $this->k;
-            $this->h = $size[0] / $this->k;
+            $this->w = $size[1];
+            $this->h = $size[0];
         } else {
             $this->Error('Incorrect orientation: '.$orientation);
         }
@@ -657,7 +657,8 @@ class FPDF {
         if (is_string($size)) {
             $a = strtolower($size);
             if (!isset($this->StdPageSizes[$a])) $this->Error('Unknown page size: '.$size);
-            return $this->StdPageSizes[$a];
+            $p = $this->StdPageSizes[$a];
+            return [$p[0] / $this->k, $p[1] / $this->k];
         } else {
             if ($size[0] > $size[1]) return [$size[1], $size[0]];
             else return $size;
@@ -676,11 +677,11 @@ class FPDF {
 
         if ($orientation !== $this->CurOrientation || $size[0] !== $this->CurPageSize[0] || $size[1] !== $this->CurPageSize[1]) {
             if ($orientation === 'P') {
-                $this->w = $size[0] / $this->k;
-                $this->h = $size[1] / $this->k;
+                $this->w = $size[0];
+                $this->h = $size[1];
             } else {
-                $this->w = $size[1] / $this->k;
-                $this->h = $size[0] / $this->k;
+                $this->w = $size[1];
+                $this->h = $size[0];
             }
             $this->wPt = $this->w * $this->k;
             $this->hPt = $this->h * $this->k;
