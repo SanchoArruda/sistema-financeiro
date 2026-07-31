@@ -318,19 +318,23 @@ class RelatorioController {
                 $pdf->SetTextColor(26, 28, 30);
                 $fill = false;
 
-                foreach ($dados as $row) {
-                    $pdf->SetFillColor($fill ? 244 : 255, $fill ? 243 : 255, $fill ? 247 : 255);
-                    $situacaoLabel = $row['situacao'] === 'realizado' ? 'Realizado' : ($row['situacao'] === 'atrasado' ? 'Em atraso' : 'Pendente');
+                if (empty($dados)) {
+                    $pdf->Cell(186, 10, $pdf->encodeText('Nenhum registro encontrado para os filtros selecionados.'), 1, 1, 'C', false);
+                } else {
+                    foreach ($dados as $row) {
+                        $pdf->SetFillColor($fill ? 244 : 255, $fill ? 243 : 255, $fill ? 247 : 255);
+                        $situacaoLabel = $row['situacao'] === 'realizado' ? 'Realizado' : ($row['situacao'] === 'atrasado' ? 'Em atraso' : 'Pendente');
 
-                    $pdf->Cell(18, 6, FormatHelper::data($row['data_lancamento']), 1, 0, 'C', true);
-                    $pdf->Cell(16, 6, $pdf->encodeText(ucfirst($row['tipo'])), 1, 0, 'C', true);
-                    $pdf->Cell(52, 6, $pdf->encodeText(mb_strimwidth($row['descricao'], 0, 32, '...')), 1, 0, 'L', true);
-                    $pdf->Cell(30, 6, $pdf->encodeText(mb_strimwidth($row['categoria_nome'], 0, 18, '...')), 1, 0, 'L', true);
-                    $pdf->Cell(26, 6, $pdf->encodeText(mb_strimwidth($row['conta_nome'], 0, 16, '...')), 1, 0, 'L', true);
-                    $pdf->Cell(24, 6, FormatHelper::moeda((float)$row['valor']), 1, 0, 'R', true);
-                    $pdf->Cell(20, 6, $pdf->encodeText($situacaoLabel), 1, 1, 'C', true);
+                        $pdf->Cell(18, 6, FormatHelper::data($row['data_lancamento']), 1, 0, 'C', true);
+                        $pdf->Cell(16, 6, $pdf->encodeText(ucfirst($row['tipo'])), 1, 0, 'C', true);
+                        $pdf->Cell(52, 6, $pdf->encodeText(mb_strimwidth($row['descricao'], 0, 32, '...')), 1, 0, 'L', true);
+                        $pdf->Cell(30, 6, $pdf->encodeText(mb_strimwidth($row['categoria_nome'], 0, 18, '...')), 1, 0, 'L', true);
+                        $pdf->Cell(26, 6, $pdf->encodeText(mb_strimwidth($row['conta_nome'], 0, 16, '...')), 1, 0, 'L', true);
+                        $pdf->Cell(24, 6, FormatHelper::moeda((float)$row['valor']), 1, 0, 'R', true);
+                        $pdf->Cell(20, 6, $pdf->encodeText($situacaoLabel), 1, 1, 'C', true);
 
-                    $fill = !$fill;
+                        $fill = !$fill;
+                    }
                 }
                 break;
 
@@ -362,14 +366,18 @@ class RelatorioController {
                 $pdf->SetTextColor(26, 28, 30);
                 $fill = false;
 
-                foreach ($dados as $row) {
-                    $pdf->SetFillColor($fill ? 244 : 255, $fill ? 243 : 255, $fill ? 247 : 255);
-                    $pdf->Cell(22, 6, FormatHelper::data($row['data_lancamento']), 1, 0, 'C', true);
-                    $pdf->Cell(64, 6, $pdf->encodeText(mb_strimwidth($row['descricao'], 0, 42, '...')), 1, 0, 'L', true);
-                    $pdf->Cell(36, 6, $pdf->encodeText(mb_strimwidth($row['categoria_nome'], 0, 22, '...')), 1, 0, 'L', true);
-                    $pdf->Cell(34, 6, $pdf->encodeText(mb_strimwidth($row['conta_nome'], 0, 20, '...')), 1, 0, 'L', true);
-                    $pdf->Cell(30, 6, FormatHelper::moeda((float)$row['valor']), 1, 1, 'R', true);
-                    $fill = !$fill;
+                if (empty($dados)) {
+                    $pdf->Cell(186, 10, $pdf->encodeText('Nenhuma despesa pendente encontrada para este período.'), 1, 1, 'C', false);
+                } else {
+                    foreach ($dados as $row) {
+                        $pdf->SetFillColor($fill ? 244 : 255, $fill ? 243 : 255, $fill ? 247 : 255);
+                        $pdf->Cell(22, 6, FormatHelper::data($row['data_lancamento']), 1, 0, 'C', true);
+                        $pdf->Cell(64, 6, $pdf->encodeText(mb_strimwidth($row['descricao'], 0, 42, '...')), 1, 0, 'L', true);
+                        $pdf->Cell(36, 6, $pdf->encodeText(mb_strimwidth($row['categoria_nome'], 0, 22, '...')), 1, 0, 'L', true);
+                        $pdf->Cell(34, 6, $pdf->encodeText(mb_strimwidth($row['conta_nome'], 0, 20, '...')), 1, 0, 'L', true);
+                        $pdf->Cell(30, 6, FormatHelper::moeda((float)$row['valor']), 1, 1, 'R', true);
+                        $fill = !$fill;
+                    }
                 }
                 break;
 
@@ -401,14 +409,18 @@ class RelatorioController {
                 $pdf->SetTextColor(26, 28, 30);
                 $fill = false;
 
-                foreach ($dados as $row) {
-                    $pdf->SetFillColor($fill ? 244 : 255, $fill ? 243 : 255, $fill ? 247 : 255);
-                    $pdf->Cell(22, 6, FormatHelper::data($row['data_lancamento']), 1, 0, 'C', true);
-                    $pdf->Cell(64, 6, $pdf->encodeText(mb_strimwidth($row['descricao'], 0, 42, '...')), 1, 0, 'L', true);
-                    $pdf->Cell(36, 6, $pdf->encodeText(mb_strimwidth($row['categoria_nome'], 0, 22, '...')), 1, 0, 'L', true);
-                    $pdf->Cell(34, 6, $pdf->encodeText(mb_strimwidth($row['conta_nome'], 0, 20, '...')), 1, 0, 'L', true);
-                    $pdf->Cell(30, 6, FormatHelper::moeda((float)$row['valor']), 1, 1, 'R', true);
-                    $fill = !$fill;
+                if (empty($dados)) {
+                    $pdf->Cell(186, 10, $pdf->encodeText('Nenhuma receita pendente encontrada para este período.'), 1, 1, 'C', false);
+                } else {
+                    foreach ($dados as $row) {
+                        $pdf->SetFillColor($fill ? 244 : 255, $fill ? 243 : 255, $fill ? 247 : 255);
+                        $pdf->Cell(22, 6, FormatHelper::data($row['data_lancamento']), 1, 0, 'C', true);
+                        $pdf->Cell(64, 6, $pdf->encodeText(mb_strimwidth($row['descricao'], 0, 42, '...')), 1, 0, 'L', true);
+                        $pdf->Cell(36, 6, $pdf->encodeText(mb_strimwidth($row['categoria_nome'], 0, 22, '...')), 1, 0, 'L', true);
+                        $pdf->Cell(34, 6, $pdf->encodeText(mb_strimwidth($row['conta_nome'], 0, 20, '...')), 1, 0, 'L', true);
+                        $pdf->Cell(30, 6, FormatHelper::moeda((float)$row['valor']), 1, 1, 'R', true);
+                        $fill = !$fill;
+                    }
                 }
                 break;
 
@@ -443,13 +455,17 @@ class RelatorioController {
                 $pdf->SetTextColor(26, 28, 30);
                 $fill = false;
 
-                foreach ($dados as $row) {
-                    $pdf->SetFillColor($fill ? 244 : 255, $fill ? 243 : 255, $fill ? 247 : 255);
-                    $pdf->Cell(76, 6, $pdf->encodeText($row['categoria_nome']), 1, 0, 'L', true);
-                    $pdf->Cell(34, 6, $pdf->encodeText(ucfirst($row['lancamento_tipo'] ?? $row['categoria_tipo'])), 1, 0, 'C', true);
-                    $pdf->Cell(36, 6, (string)$row['total_lancamentos'], 1, 0, 'C', true);
-                    $pdf->Cell(40, 6, FormatHelper::moeda((float)$row['total_valor']), 1, 1, 'R', true);
-                    $fill = !$fill;
+                if (empty($dados)) {
+                    $pdf->Cell(186, 10, $pdf->encodeText('Nenhuma categoria movimentada para este período.'), 1, 1, 'C', false);
+                } else {
+                    foreach ($dados as $row) {
+                        $pdf->SetFillColor($fill ? 244 : 255, $fill ? 243 : 255, $fill ? 247 : 255);
+                        $pdf->Cell(76, 6, $pdf->encodeText($row['categoria_nome']), 1, 0, 'L', true);
+                        $pdf->Cell(34, 6, $pdf->encodeText(ucfirst($row['lancamento_tipo'] ?? $row['categoria_tipo'])), 1, 0, 'C', true);
+                        $pdf->Cell(36, 6, (string)$row['total_lancamentos'], 1, 0, 'C', true);
+                        $pdf->Cell(40, 6, FormatHelper::moeda((float)$row['total_valor']), 1, 1, 'R', true);
+                        $fill = !$fill;
+                    }
                 }
                 break;
         }

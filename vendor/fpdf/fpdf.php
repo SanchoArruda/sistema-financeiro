@@ -67,6 +67,7 @@ class FPDF {
     protected $LayoutMode;         // layout display mode
     protected $metadata;           // document properties
     protected $pdf_version;        // PDF version number
+    protected $resObjId;           // Resource object ID
 
     public function __construct($orientation='P', $unit='mm', $size='A4') {
         // Some initialization
@@ -751,8 +752,8 @@ class FPDF {
 
     protected function _enddoc() {
         $this->_putheader();
-        $this->_putpages();
         $this->_putresources();
+        $this->_putpages();
         $this->_putinfo();
         $this->_putcatalog();
         // Cross-reference table
@@ -761,7 +762,7 @@ class FPDF {
         $this->_out('0 '.($this->n + 1));
         $this->_out('0000000000 65535 f ');
         for ($i = 1; $i <= $this->n; $i++) {
-            $this->_out(sprintf('%010d 00000 n ', $this->offsets[$i]));
+            $this->_out(sprintf('%010d 00000 n ', $this->offsets[$i] ?? 0));
         }
         // Trailer
         $this->_out('trailer');
@@ -790,30 +791,28 @@ class FPDF {
 
     protected function _putpages() {
         $nb = $this->page;
-        if ($this->AliasNbPages !== '') {
-            for ($n = 1; $n <= $nb; $n++) {
+        $resObjId = $this->resObjId ?? 3;
+        for ($n = 1; $n <= $nb; $n++) {
+            if ($this->AliasNbPages !== '') {
                 $this->pages[$n] = str_replace($this->AliasNbPages, (string)$nb, $this->pages[$n]);
             }
         }
         for ($n = 1; $n <= $nb; $n++) {
             $this->_newobj();
+            $this->PageInfo[$n]['n'] = $this->n;
             $this->_out('<</Type /Page');
             $this->_out('/Parent 2 0 R');
-            $this->_out(sprintf('/MediaBox [0 0 %.2F %.2F]', $this->wPt, $this->hPt));
-            $this->_out('/Resources 3 0 R');
+            if (isset($this->PageInfo[$n]['size'])) {
+                $this->_out(sprintf('/MediaBox [0 0 %.2F %.2F]', $this->PageInfo[$n]['size'][0], $this->PageInfo[$n]['size'][1]));
+            }
+            $this->_out('/Resources '.$resObjId.' 0 R');
             $this->_out('/Contents '.($this->n + 1).' 0 R>>');
             $this->_out('endobj');
 
             // Page content stream
-            $p = $this->pages[$n];
-            if ($this->compress) {
-                $p = gzcompress($p);
-                $this->_newobj();
-                $this->_out('<</Filter /FlateDecode /Length '.strlen($p).'>>');
-            } else {
-                $this->_newobj();
-                $this->_out('<</Length '.strlen($p).'>>');
-            }
+            $p = $this->compress ? gzcompress($this->pages[$n]) : $this->pages[$n];
+            $this->_newobj();
+            $this->_out('<</Length '.strlen($p).($this->compress ? ' /Filter /FlateDecode' : '').'>>');
             $this->_putstream($p);
             $this->_out('endobj');
         }
@@ -823,7 +822,7 @@ class FPDF {
         $this->_out('<</Type /Pages');
         $kids = '/Kids [';
         for ($n = 1; $n <= $nb; $n++) {
-            $kids .= (3 + 2 * ($n - 1)).' 0 R ';
+            $kids .= $this->PageInfo[$n]['n'].' 0 R ';
         }
         $this->_out($kids.']');
         $this->_out('/Count '.$nb);
@@ -831,26 +830,10 @@ class FPDF {
         $this->_out('endobj');
     }
 
-    protected function _putresources() {
-        $this->_putfonts();
-        // Resource dictionary
-        $this->offsets[3] = strlen($this->buffer);
-        $this->_out('3 0 obj');
-        $this->_out('<<');
-        $this->_out('/ProcSet [/PDF /Text]');
-        $this->_out('/Font <<');
-        foreach ($this->fonts as $font) {
-            $this->_out('/F'.$font['i'].' '.$font['n'].' 0 R');
-        }
-        $this->_out('>>');
-        $this->_out('>>');
-        $this->_out('endobj');
-    }
-
     protected function _putfonts() {
-        foreach ($this->fonts as &$font) {
+        foreach ($this->fonts as $k => $font) {
             $this->_newobj();
-            $font['n'] = $this->n;
+            $this->fonts[$k]['n'] = $this->n;
             $this->_out('<</Type /Font');
             $this->_out('/Subtype /Type1');
             $this->_out('/BaseFont /'.$font['name']);
@@ -858,6 +841,22 @@ class FPDF {
             $this->_out('>>');
             $this->_out('endobj');
         }
+    }
+
+    protected function _putresources() {
+        $this->_putfonts();
+        $this->_newobj();
+        $this->resObjId = $this->n;
+        $this->_out($this->n.' 0 obj');
+        $this->_out('<<');
+        $this->_out('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]');
+        $this->_out('/Font <<');
+        foreach ($this->fonts as $font) {
+            $this->_out('/F'.$font['i'].' '.$font['n'].' 0 R');
+        }
+        $this->_out('>>');
+        $this->_out('>>');
+        $this->_out('endobj');
     }
 
     protected function _putinfo() {
