@@ -11,6 +11,8 @@ if (!defined('FINZY_BOOTSTRAP')) {
     exit('Acesso proibido.');
 }
 
+$csrfToken = $csrfToken ?? AuthHelper::generateCsrfToken();
+
 require __DIR__ . '/../layouts/header.php';
 ?>
 
@@ -198,7 +200,7 @@ require __DIR__ . '/../layouts/header.php';
                                                 <div class="modal-footer bg-light">
                                                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
                                                     <form method="POST" action="?route=lixeira_restaurar" class="d-inline">
-                                                        <?php echo AuthHelper::getCrfInput(); ?>
+                                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
                                                         <input type="hidden" name="id" value="<?php echo $item['id']; ?>">
                                                         <button type="submit" class="btn btn-success btn-sm px-4">
                                                             Confirmar Restauração

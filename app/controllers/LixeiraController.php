@@ -49,6 +49,7 @@ class LixeiraController {
         }
 
         $itens = $this->lancamentoModel->listarLixeira($filtros, $pagina, $porPagina);
+        $csrfToken = AuthHelper::generateCsrfToken();
         $totalItens = $this->lancamentoModel->contarLixeira($filtros);
         $totalPaginas = (int) ceil($totalItens / $porPagina);
 
@@ -66,7 +67,11 @@ class LixeiraController {
             exit;
         }
 
-        AuthHelper::validateCsrfToken();
+        if (!AuthHelper::validateCsrfToken($_POST['csrf_token'] ?? null)) {
+            $_SESSION['mensagem_erro'] = 'Token de segurança (CSRF) inválido. Tente novamente.';
+            header('Location: ?route=lixeira');
+            exit;
+        }
 
         $usuarioLogado = AuthHelper::getLoggedUser();
         $usuarioId = (int)$usuarioLogado['id'];
