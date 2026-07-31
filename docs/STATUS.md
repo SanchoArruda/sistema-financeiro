@@ -21,7 +21,7 @@
   - Arquivo `.gitattributes` criado para padronização de finais de linha (LF) e tipos de arquivo.
   - Auditoria de segurança confirmou que nenhum segredo ou dado sensível foi incluído no staging.
   - Primeiro commit efetuado com sucesso ("Estrutura inicial do projeto").
-  - Repositório remoto `origin` conectado com sucesso a `git@github.com:SanchoArruda/sistema_financeiro.git`.
+  - Repositório remoto `origin` atualizado com o nome exato do GitHub: `git@github.com:SanchoArruda/sistema-financeiro.git`.
 
 ---
 
@@ -39,7 +39,7 @@
   - [x] Criar e configurar `.gitignore` e `.gitattributes`
   - [x] Auditar exclusão de credenciais e logs sensíveis
   - [x] Fazer commit inicial do projeto
-  - [x] Conectar remote origin `git@github.com:SanchoArruda/sistema_financeiro.git`
+  - [x] Conectar remote origin `git@github.com:SanchoArruda/sistema-financeiro.git`
   - [ ] Realizar `git push` no terminal do usuário (aguardando envio)
 - [ ] **Fase 2 — Banco de Dados, Conexão e Migrations**
 - [ ] **Fase 3 — Autenticação, Sessão e Troca de Senha**
