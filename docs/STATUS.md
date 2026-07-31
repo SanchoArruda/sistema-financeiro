@@ -1,7 +1,7 @@
 # Status do Projeto — Finzy
 
 **Última atualização:** 2026-07-31  
-**Fase Atual:** Fase 1 — Infraestrutura e Estrutura Base do Projeto (Concluída)  
+**Fase Atual:** Configuração de Controle de Versão (Git & GitHub) — Concluída  
 **Próximo Passo:** Fase 2 — Banco de Dados, Conexão e Migrations (em chat novo + prompt da Fase 2)
 
 ---
@@ -14,6 +14,14 @@
 - `AGENTS.md` criado na raiz do projeto contendo stack, regras de segurança, diretrizes do Design System *Fiscal Precision* e o protocolo dos arquivos vivos com caminhos estritamente relativos.
 - `docs/ERROS.md` inicializado.
 - Estrutura base de diretórios, proteções `.htaccess`, ponto de entrada `index.php`, `.gitignore`, `config/config.php` e arquivos base de estilo (`assets/css/app.css` e `assets/js/app.js`) criados e configurados.
+- **Controle de Versão (Git & GitHub):**
+  - Repositório Git inicializado no diretório do projeto.
+  - Arquivo `.gitignore` revisado e atualizado para proteger `config/config.php` (credenciais de BD/SMTP), logs e backups.
+  - Arquivo `config/config.example.php` criado como modelo de configuração sem segredos.
+  - Arquivo `.gitattributes` criado para padronização de finais de linha (LF) e tipos de arquivo.
+  - Auditoria de segurança confirmou que nenhum segredo ou dado sensível foi incluído no staging.
+  - Primeiro commit efetuado com sucesso ("Estrutura inicial do projeto").
+  - Repositório GitHub pendente de conexão via remote pelo usuário (instruções fornecidas).
 
 ---
 
@@ -23,9 +31,15 @@
   - [x] Criar estrutura de pastas (`config/`, `app/`, `database/`, `assets/`, `logs/`, `vendor/`)
   - [x] Criar `.gitignore`
   - [x] Criar `.htaccess` principal e proteções individuais em pastas sensíveis (`Require all denied`)
-  - [x] Criar `config/config.php` base
+  - [x] Criar `config/config.php` base e `config/config.example.php`
   - [x] Criar ponto de entrada `index.php`
   - [x] Criar `assets/css/app.css` com Design System *Fiscal Precision* e `assets/js/app.js`
+- [x] **Configuração de Git & GitHub (Backup Seguro)**
+  - [x] Inicializar Git e galho principal `main`
+  - [x] Criar e configurar `.gitignore` e `.gitattributes`
+  - [x] Auditar exclusão de credenciais e logs sensíveis
+  - [x] Fazer commit inicial do projeto
+  - [ ] Conectar remote origin e fazer `git push` no GitHub (pendente de ação do usuário)
 - [ ] **Fase 2 — Banco de Dados, Conexão e Migrations**
 - [ ] **Fase 3 — Autenticação, Sessão e Troca de Senha**
 - [ ] **Fase 4 — Recuperação de Senha por E-mail**
@@ -43,4 +57,4 @@
 
 ## Próxima Ação Recomendada
 
-Iniciar a **Fase 2 — Banco de Dados, Conexão e Migrations** em um novo chat com o prompt correspondente à Fase 2.
+Após realizar a conexão e o `git push` para o seu repositório no GitHub, inicie a **Fase 2 — Banco de Dados, Conexão e Migrations** em um novo chat com o prompt correspondente à Fase 2.
