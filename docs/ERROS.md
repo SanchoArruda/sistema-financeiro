@@ -62,7 +62,13 @@ Este arquivo serve para registrar falhas, exceções ou problemas encontrados du
 - Sintoma: O arquivo PDF gerado era baixado/exibido com visualização de página inteiramente em branco.
 - Causa: Os métodos `Cell()` e `Text()` em `vendor/fpdf/fpdf.php` abriam novos blocos de texto no PDF (`BT ... ET`) sem incluir o operador de seleção de fonte `/F%d %.2F Tf` dentro de cada bloco. Com isso, leitores de PDF desconsideravam os caracteres de texto por falta de fonte ativa no escopo do objeto de texto.
 - Solução aplicada: Adicionado `/F%d %.2F Tf` no formato de string dos métodos `Cell()` e `Text()` no `vendor/fpdf/fpdf.php`.
-- Como evitar no futuro: Garantir que todo operador `BT` em geradores PDF selecione explicitamente a fonte (`/F... Tf`) antes das instruções `Td` e `Tj`.
+## 2026-07-31 - Conteúdo do PDF desenhado fora da área visível da página (escala de dimensão `w` e `h`)
+
+- Sintoma: O leitor de PDF do navegador abria uma folha A4 em branco sem exibir textos, retângulos ou tabelas.
+- Causa: As propriedades `$this->w` e `$this->h` da classe `FPDF` eram inicializadas com as dimensões em pontos (`595.28` x `841.89`) em vez de milímetros (`210` x `297`). Ao multiplicar novamente por `$this->k` (`2.8346`) durante a emissão dos comandos de desenho, todos os elementos eram renderizados com coordenadas 3 vezes maiores que a página (`Y = 2380pt`), saindo completamente do campo de visão do documento A4.
+- Solução aplicada: Corrigidas as propriedades `$this->w` e `$this->h` em `__construct` e `_beginpage()` em `vendor/fpdf/fpdf.php` para dividir `$size` pelo fator `$this->k` (`$size[0] / $this->k`), garantindo unidades em milímetros.
+- Como evitar no futuro: Garantir que a conversão entre pontos e unidades do usuário (mm) em geradores de PDF converta corretamente as dimensões de página do vetor `$StdPageSizes`.
+
 
 
 
