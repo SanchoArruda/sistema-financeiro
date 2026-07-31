@@ -71,6 +71,15 @@ Este arquivo serve para registrar falhas, exceções ou problemas encontrados du
 
 ---
 
+## 2026-07-31 - Estado de documento FPDF ausente (`$this->state = 2`) em `_beginpage()`
+
+- Sintoma: O PDF era gerado com tamanho válido, porém o leitor de PDF exibia a página 1 em branco sem nenhum elemento visual.
+- Causa: Ao iniciar uma nova página via `_beginpage()`, a propriedade `$this->state` permanecia com valor `1` em vez de transicionar para `2` (estado de gravação no stream de página). Por conta disso, as instruções de desenho e texto emitidas por `Cell()`, `Text()` e `Rect()` eram desviadas diretamente para o buffer geral do arquivo antes dos objetos PDF, deixando o stream da página 1 (`/Contents`) totalmente vazio.
+- Solução aplicada: Adicionado `$this->state = 2;` no método `_beginpage()` em `vendor/fpdf/fpdf.php`.
+
+
+---
+
 ## 2026-07-31 - Redefinição de dimensões em `_beginpage()` em pontos no FPDF
 
 - Sintoma: A primeira página do relatório em PDF continuava sendo renderizada em branco no navegador.
