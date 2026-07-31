@@ -11,13 +11,17 @@ if (!defined('FINZY_BOOTSTRAP')) {
 }
 
 require_once __DIR__ . '/../helpers/AuthHelper.php';
+require_once __DIR__ . '/../helpers/MailHelper.php';
 require_once __DIR__ . '/../models/UsuarioModel.php';
+require_once __DIR__ . '/../models/TokenRecuperacaoModel.php';
 
 class AuthController {
     private UsuarioModel $usuarioModel;
+    private TokenRecuperacaoModel $tokenModel;
 
     public function __construct() {
         $this->usuarioModel = new UsuarioModel();
+        $this->tokenModel = new TokenRecuperacaoModel();
     }
 
     /**
@@ -90,6 +94,140 @@ class AuthController {
 
         header('Location: ?route=dashboard');
         exit;
+    }
+
+    /**
+     * Exibe a tela de solicitação de recuperação de senha.
+     */
+    public function exibirEsqueciSenha(?string $erro = null, ?string $sucesso = null): void {
+        AuthHelper::initSession();
+
+        if (AuthHelper::isAuthenticated()) {
+            header('Location: ?route=dashboard');
+            exit;
+        }
+
+        $csrfToken = AuthHelper::generateCsrfToken();
+        require __DIR__ . '/../views/auth/esqueci_senha.php';
+    }
+
+    /**
+     * Processa a solicitação de recuperação de senha via POST.
+     */
+    public function processarEsqueciSenha(): void {
+        AuthHelper::initSession();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ?route=esqueci_senha');
+            exit;
+        }
+
+        $tokenCsrf = $_POST['csrf_token'] ?? '';
+        if (!AuthHelper::validateCsrfToken($tokenCsrf)) {
+            $this->exibirEsqueciSenha('Sessão ou formulário inválido. Por favor, tente novamente.');
+            return;
+        }
+
+        $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+        
+        // Mensagem genérica para segurança (evita enumeração de e-mails de usuários)
+        $mensagemGenericaSucesso = 'Se o e-mail informado estiver cadastrado e ativo em nosso sistema, você receberá as instruções com o link de redefinição de senha.';
+
+        if (!$email) {
+            $this->exibirEsqueciSenha('Por favor, informe um endereço de e-mail válido.');
+            return;
+        }
+
+        $usuario = $this->usuarioModel->buscarPorEmail($email);
+
+        if ($usuario && $usuario['status'] === 'ativo') {
+            $token = $this->tokenModel->gerarToken((int)$usuario['id']);
+            MailHelper::enviarEmailRecuperacao($usuario['email'], $usuario['nome'], $token);
+        }
+
+        // Exibe sempre a mesma mensagem genérica por razões de segurança
+        $this->exibirEsqueciSenha(null, $mensagemGenericaSucesso);
+    }
+
+    /**
+     * Exibe a tela de redefinição de senha para usuários que clicaram no link temporário.
+     */
+    public function exibirRedefinirSenha(?string $erro = null): void {
+        AuthHelper::initSession();
+
+        $token = $_GET['token'] ?? '';
+
+        if (empty($token)) {
+            $this->exibirLogin('Token de redefinição de senha não informado.');
+            return;
+        }
+
+        $tokenValido = $this->tokenModel->buscarTokenValido($token);
+
+        if (!$tokenValido) {
+            $this->exibirEsqueciSenha('O link de redefinição de senha é inválido, foi utilizado ou expirou. Por favor, solicite um novo link.');
+            return;
+        }
+
+        $csrfToken = AuthHelper::generateCsrfToken();
+        require __DIR__ . '/../views/auth/redefinir_senha.php';
+    }
+
+    /**
+     * Processa a criação da nova senha via token temporário.
+     */
+    public function processarRedefinirSenha(): void {
+        AuthHelper::initSession();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ?route=login');
+            exit;
+        }
+
+        $tokenCsrf = $_POST['csrf_token'] ?? '';
+        if (!AuthHelper::validateCsrfToken($tokenCsrf)) {
+            $this->exibirEsqueciSenha('Sessão ou formulário inválido. Por favor, tente novamente.');
+            return;
+        }
+
+        $token = $_POST['token'] ?? '';
+        $novaSenha = $_POST['nova_senha'] ?? '';
+        $confirmacaoSenha = $_POST['confirmacao_senha'] ?? '';
+
+        $tokenValido = $this->tokenModel->buscarTokenValido($token);
+
+        if (!$tokenValido) {
+            $this->exibirEsqueciSenha('O link de redefinição de senha é inválido, foi utilizado ou expirou. Por favor, solicite um novo link.');
+            return;
+        }
+
+        if (empty($novaSenha) || empty($confirmacaoSenha)) {
+            $this->exibirRedefinirSenha('Preencha a nova senha e a confirmação.');
+            return;
+        }
+
+        if (mb_strlen($novaSenha, 'UTF-8') < 6) {
+            $this->exibirRedefinirSenha('A nova senha deve ter no mínimo 6 caracteres.');
+            return;
+        }
+
+        if ($novaSenha !== $confirmacaoSenha) {
+            $this->exibirRedefinirSenha('A confirmação da senha não confere com a nova senha.');
+            return;
+        }
+
+        $usuarioId = (int)$tokenValido['usuario_id'];
+
+        // Atualiza a senha do usuário
+        $sucessoAtualizacao = $this->usuarioModel->atualizarSenha($usuarioId, $novaSenha);
+
+        if ($sucessoAtualizacao) {
+            // Marca o token como utilizado
+            $this->tokenModel->marcarComoUsado($token);
+            $this->exibirLogin(null, 'Sua senha foi redefinida com sucesso! Você já pode entrar com a nova senha.');
+        } else {
+            $this->exibirRedefinirSenha('Ocorreu um erro ao atualizar sua senha. Tente novamente.');
+        }
     }
 
     /**

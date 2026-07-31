@@ -1,8 +1,8 @@
 # Status do Projeto — Finzy
 
 **Última atualização:** 2026-07-31  
-**Fase Atual:** Fase 3 — Autenticação, Sessão e Troca de Senha — Concluída  
-**Próximo Passo:** Fase 4 — Recuperação de Senha por E-mail (em chat novo + prompt da próxima fase)
+**Fase Atual:** Fase 4 — Recuperação de Senha por E-mail — Concluída  
+**Próximo Passo:** Fase 5 — Controle de Acesso (RBAC) e Sistema de Logs (em chat novo + prompt da próxima fase)
 
 ---
 
@@ -19,12 +19,13 @@
 - **Fase 2 — Banco de Dados, Conexão e Migrations (Concluída):**
   - Conexão PDO, runner de migrations e migrations 001 a 009 implementadas.
 - **Fase 3 — Autenticação, Sessão e Troca de Senha (Concluída):**
-  - Helper de Autenticação (`app/helpers/AuthHelper.php`) construído com gerenciamento de sessão segura, cookies `HttpOnly`/`SameSite=Lax`, controle de tempo limite de inatividade (30 min) e validação contra CSRF com `hash_equals()`.
-  - Model de Usuário (`app/models/UsuarioModel.php`) implementado com Prepared Statements PDO, verificação de hash com `password_verify()` e atualização de hash com `password_hash()` (bcrypt).
-  - Controller de Autenticação (`app/controllers/AuthController.php`) criado com suporte a login, logout e fluxo obrigatório de troca de senha no primeiro acesso (`primeiro_acesso = 1`).
-  - Interface visual desenvolvida em Bootstrap 5 local + Design System *Fiscal Precision* (`app/views/auth/login.php` e `app/views/auth/primeiro_acesso.php`).
-  - Front Controller `index.php` atualizado com roteamento centralizado e validações de sessão.
-  - Dependências locais salvas em `assets/bootstrap/` (`bootstrap.min.css` e `bootstrap.bundle.min.js`).
+  - Helper de Autenticação (`app/helpers/AuthHelper.php`), `UsuarioModel.php`, `AuthController.php` e Views em `app/views/auth/`.
+- **Fase 4 — Recuperação de Senha por E-mail (Concluída):**
+  - Model `TokenRecuperacaoModel.php` implementado para geração de tokens de 64 hexadecimais, expiração de 24h, invalidação de tokens pendentes e uso único.
+  - Helper `MailHelper.php` criado para formatação e envio de e-mails em HTML.
+  - Controllers e Views criados para solicitação (`esqueci_senha.php`) e redefinição (`redefinir_senha.php`).
+  - Proteção contra enumeração de usuários (mensagens genéricas de confirmação de envio).
+  - Rotas públicas atualizadas no Front Controller (`index.php`).
 
 ---
 
@@ -34,13 +35,12 @@
 - [x] **Configuração de Git & GitHub (Backup Seguro)**
 - [x] **Fase 2 — Banco de Dados, Conexão e Migrations**
 - [x] **Fase 3 — Autenticação, Sessão e Troca de Senha**
-  - [x] Criar `app/helpers/AuthHelper.php` (sessão, timeout, CSRF)
-  - [x] Criar `app/models/UsuarioModel.php` (autenticação e alteração de senha)
-  - [x] Criar `app/controllers/AuthController.php` (login, logout, primeiro acesso)
-  - [x] Criar `assets/bootstrap/` (Bootstrap 5 local minificado)
-  - [x] Criar Views em `app/views/auth/` e layouts em `app/views/layouts/` (Fiscal Precision)
-  - [x] Atualizar `index.php` (Front Controller e roteamento)
-- [ ] **Fase 4 — Recuperação de Senha por E-mail**
+- [x] **Fase 4 — Recuperação de Senha por E-mail**
+  - [x] Criar `app/models/TokenRecuperacaoModel.php` (geração de token 24h, verificação e uso único)
+  - [x] Criar `app/helpers/MailHelper.php` (envio de e-mail formatado HTML com link temporário)
+  - [x] Atualizar `app/controllers/AuthController.php` (actions `exibirEsqueciSenha`, `processarEsqueciSenha`, `exibirRedefinirSenha`, `processarRedefinirSenha`)
+  - [x] Criar Views em `app/views/auth/esqueci_senha.php` e `app/views/auth/redefinir_senha.php`
+  - [x] Atualizar `index.php` (rotas públicas e roteamento para recuperação/redefinição)
 - [ ] **Fase 5 — Controle de Acesso (RBAC) e Sistema de Logs**
 - [ ] **Fase 6 — Cadastros Básicos (Categorias, Formas de Pagamento e Contas)**
 - [ ] **Fase 7 — Gestão de Usuários e Auto-gestão de Perfil**
@@ -55,4 +55,4 @@
 
 ## Próxima Ação Recomendada
 
-Fase 3 concluída com sucesso! Iniciar a **Fase 4 — Recuperação de Senha por E-mail** em um novo chat com o prompt da próxima fase.
+Fase 4 concluída com sucesso! Iniciar a **Fase 5 — Controle de Acesso (RBAC) e Sistema de Logs** em um novo chat com o prompt da próxima fase.

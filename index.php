@@ -36,7 +36,14 @@ AuthHelper::initSession();
 $route = $_GET['route'] ?? 'dashboard';
 
 // Lista de rotas públicas (acessíveis sem login)
-$publicRoutes = ['login', 'processar_login', 'esqueci_senha', 'redefinir_senha'];
+$publicRoutes = [
+    'login', 
+    'processar_login', 
+    'esqueci_senha', 
+    'processar_esqueci_senha', 
+    'redefinir_senha', 
+    'processar_redefinir_senha'
+];
 
 // Se não estiver autenticado e tentar acessar rota protegida, redireciona para login
 if (!AuthHelper::isAuthenticated() && !in_array($route, $publicRoutes, true)) {
@@ -55,6 +62,22 @@ switch ($route) {
 
     case 'processar_login':
         (new AuthController())->processarLogin();
+        break;
+
+    case 'esqueci_senha':
+        (new AuthController())->exibirEsqueciSenha();
+        break;
+
+    case 'processar_esqueci_senha':
+        (new AuthController())->processarEsqueciSenha();
+        break;
+
+    case 'redefinir_senha':
+        (new AuthController())->exibirRedefinirSenha();
+        break;
+
+    case 'processar_redefinir_senha':
+        (new AuthController())->processarRedefinirSenha();
         break;
 
     case 'primeiro_acesso':
