@@ -1,0 +1,140 @@
+/* ==========================================================================
+   Design System: Fiscal Precision — Finzy
+   Base CSS personalizado baseado nas diretrizes de docs/DESIGN.md
+   ========================================================================== */
+
+/* Font Inter & Configurações Numéricas */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Cores Principais (Design System Fiscal Precision) */
+  --color-surface: #faf9fc;
+  --color-surface-dim: #dad9dd;
+  --color-surface-bright: #faf9fc;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f4f3f7;
+  --color-surface-container: #eeedf1;
+  --color-surface-container-high: #e9e7eb;
+  --color-surface-container-highest: #e3e2e6;
+  --color-on-surface: #1a1c1e;
+  --color-on-surface-variant: #43474e;
+  --color-outline: #74777f;
+  --color-outline-variant: #c4c6cf;
+  
+  --color-primary: #022448;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #1e3a5f;
+  --color-on-primary-container: #8aa4cf;
+  
+  --color-secondary: #006e2d;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #7cf994;
+  --color-on-secondary-container: #007230;
+  
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  
+  /* Tipografia */
+  --font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
+  
+  /* Raios de Borda */
+  --radius-sm: 0.25rem;  /* 4px */
+  --radius-default: 0.5rem; /* 8px */
+  --radius-md: 0.75rem; /* 12px */
+  --radius-lg: 1rem;   /* 16px */
+  --radius-full: 9999px;
+  
+  /* Espaçamentos base (4px) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+}
+
+/* Reset e Regras Globais */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-base);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  line-height: 1.5;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+/* Números tabulares para tabelas e valores financeiros */
+.tabular-nums, table td, .kpi-value, .financial-amount {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Utilitários de Cores */
+.bg-surface { background-color: var(--color-surface); }
+.bg-surface-container { background-color: var(--color-surface-container); }
+.bg-primary { background-color: var(--color-primary); }
+.bg-secondary { background-color: var(--color-secondary); }
+.bg-error { background-color: var(--color-error); }
+
+.text-primary { color: var(--color-primary); }
+.text-secondary { color: var(--color-secondary); }
+.text-error { color: var(--color-error); }
+.text-on-surface { color: var(--color-on-surface); }
+.text-on-surface-variant { color: var(--color-on-surface-variant); }
+.text-outline { color: var(--color-outline); }
+
+/* Cartões e Contêineres */
+.card {
+  background-color: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-default);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Botões */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family-base);
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-default);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-container);
+}
+
+.btn-success {
+  background-color: var(--color-secondary);
+  color: var(--color-on-secondary);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-on-surface-variant);
+}
+
+.btn-ghost:hover {
+  background-color: var(--color-surface-container);
+}

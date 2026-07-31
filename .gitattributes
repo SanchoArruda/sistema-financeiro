@@ -1,0 +1,26 @@
+# Auto-detectar arquivos de texto e padronizar finais de linha em LF (Linux)
+* text=auto eol=lf
+
+# Código backend, frontend e scripts como texto
+*.php text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.sql text eol=lf
+*.md text eol=lf
+.htaccess text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# Imagens e fontes como arquivos binários
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary

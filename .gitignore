@@ -1,0 +1,51 @@
+# ==========================================
+# Ignorar arquivos de configuração reais com segredos
+# ==========================================
+config/config.php
+.env
+.env.local
+*.env
+
+# ==========================================
+# Ignorar Logs e Dados Dinâmicos de Execução
+# ==========================================
+logs/*.txt
+logs/*/*.txt
+logs/*/*/*.txt
+logs/*.log
+logs/*/*.log
+
+# Preservar proteções e arquivos estruturais da pasta de logs
+!logs/.htaccess
+!logs/.gitkeep
+
+# ==========================================
+# Ignorar Dumps e Backups de Banco de Dados
+# ==========================================
+*.sql.gz
+*.sql.zip
+*.dump
+*.tar
+*.bak
+
+# ==========================================
+# Ignorar Arquivos do Sistema Operacional
+# ==========================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# Ignorar Configurações de Editores / IDEs
+# ==========================================
+.vscode/
+.idea/
+*.suo
+*.user
+
+# ==========================================
+# Ignorar Arquivos Temporários
+# ==========================================
+*.tmp
+*.swp
+*~
