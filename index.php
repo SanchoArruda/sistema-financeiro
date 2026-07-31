@@ -24,11 +24,17 @@ if (file_exists(__DIR__ . '/config/config.php')) {
 ini_set('display_errors', '1');
 error_reporting(E_ALL);
 
-// Carrega os utilitários básicos e controllers
+// Carrega utilitários básicos
 require_once __DIR__ . '/app/models/Database.php';
 require_once __DIR__ . '/app/helpers/LogHelper.php';
 require_once __DIR__ . '/app/helpers/AuthHelper.php';
+require_once __DIR__ . '/app/helpers/FormatHelper.php';
+
+// Carrega controllers
 require_once __DIR__ . '/app/controllers/AuthController.php';
+require_once __DIR__ . '/app/controllers/CategoriaController.php';
+require_once __DIR__ . '/app/controllers/FormaPagamentoController.php';
+require_once __DIR__ . '/app/controllers/ContaController.php';
 
 // Configuração de manipuladores globais de erros e exceções
 set_exception_handler(function (Throwable $e) {
@@ -147,6 +153,43 @@ switch ($route) {
     case 'dashboard':
         AuthHelper::requireLogin();
         require __DIR__ . '/app/views/dashboard/index.php';
+        break;
+
+    // Rotas de Cadastros Básicos (Fase 6 — Restrito a Administradores via Controller)
+    case 'categorias':
+        (new CategoriaController())->index();
+        break;
+
+    case 'categorias_salvar':
+        (new CategoriaController())->salvar();
+        break;
+
+    case 'categorias_status':
+        (new CategoriaController())->alternarStatus();
+        break;
+
+    case 'formas_pagamento':
+        (new FormaPagamentoController())->index();
+        break;
+
+    case 'formas_pagamento_salvar':
+        (new FormaPagamentoController())->salvar();
+        break;
+
+    case 'formas_pagamento_status':
+        (new FormaPagamentoController())->alternarStatus();
+        break;
+
+    case 'contas':
+        (new ContaController())->index();
+        break;
+
+    case 'contas_salvar':
+        (new ContaController())->salvar();
+        break;
+
+    case 'contas_status':
+        (new ContaController())->alternarStatus();
         break;
 
     default:

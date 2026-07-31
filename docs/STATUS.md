@@ -1,8 +1,8 @@
 # Status do Projeto — Finzy
 
 **Última atualização:** 2026-07-31  
-**Fase Atual:** Fase 5 — Controle de Acesso (RBAC) e Sistema de Logs — Concluída  
-**Próximo Passo:** Fase 6 — Cadastros Básicos (Categorias, Formas de Pagamento e Contas) (em chat novo + prompt da próxima fase)
+**Fase Atual:** Fase 6 — Cadastros Básicos (Categorias, Formas de Pagamento e Contas) — Concluída  
+**Próximo Passo:** Fase 7 — Gestão de Usuários e Auto-gestão de Perfil (em chat novo + prompt da próxima fase)
 
 ---
 
@@ -23,11 +23,14 @@
 - **Fase 4 — Recuperação de Senha por E-mail (Concluída):**
   - Model `TokenRecuperacaoModel.php`, `MailHelper.php`, `AuthController.php` e views de recuperação e redefinição.
 - **Fase 5 — Controle de Acesso (RBAC) e Sistema de Logs (Concluída):**
-  - Helper de Logs (`app/helpers/LogHelper.php`) para gravação de logs de erro em `logs/ANO/MES/log_YYYY-MM-DD.txt`, logs de segurança em `logs/security/security_YYYY-MM-DD.txt` e limpeza de logs antigos.
-  - Métodos RBAC adicionados a `app/helpers/AuthHelper.php` (`hasRole()`, `isAdmin()`, `isOperador()`, `requireRole()`, `requireAdmin()`, `exibirAcessoNegado()`).
-  - View de Acesso Negado (`app/views/auth/acesso_negado.php`) com status HTTP 403 e layout no padrão *Fiscal Precision*.
-  - Handlers globais de erro (`set_error_handler`) e exceção (`set_exception_handler`) configurados em `index.php` para captura segura de exceções sem expor dados internos ao usuário final.
-  - Registros de eventos de segurança integrados em `AuthController.php` e `AuthHelper.php`.
+  - Helper de Logs (`app/helpers/LogHelper.php`), RBAC em `AuthHelper.php`, View de Acesso Negado e manipuladores globais em `index.php`.
+- **Fase 6 — Cadastros Básicos (Categorias, Formas de Pagamento e Contas) (Concluída):**
+  - Helper de Formatação (`app/helpers/FormatHelper.php`) para moeda R$, datas no padrão brasileiro e badges de status.
+  - CRUD completo de Categorias (`CategoriaModel.php`, `CategoriaController.php`, `app/views/categorias/index.php`) com filtro por busca, tipo e status, validação de nome duplicado por tipo e auditoria.
+  - CRUD completo de Formas de Pagamento (`FormaPagamentoModel.php`, `FormaPagamentoController.php`, `app/views/formas_pagamento/index.php`) com filtro por busca e status, validação de duplicidade e auditoria.
+  - CRUD completo de Contas Financeiras (`ContaModel.php`, `ContaController.php`, `app/views/contas/index.php`) com cálculo dinâmico de `Saldo Atual = Saldo Inicial + Σ Receitas Realizadas - Σ Despesas Realizadas`, filtro por busca, tipo de conta e status, além de auditoria.
+  - Layouts base `app/views/layouts/header.php` e `app/views/layouts/footer.php` criados com o Design System *Fiscal Precision*, menu dropdown responsivo para Cadastros Básicos e atalhos no Dashboard.
+  - Roteamento configurado em `index.php` protegendo todas as rotas de Cadastros Básicos para acesso exclusivo do perfil Administrador via RBAC backend.
 
 ---
 
@@ -39,12 +42,17 @@
 - [x] **Fase 3 — Autenticação, Sessão e Troca de Senha**
 - [x] **Fase 4 — Recuperação de Senha por E-mail**
 - [x] **Fase 5 — Controle de Acesso (RBAC) e Sistema de Logs**
-  - [x] Criar `app/helpers/LogHelper.php` (logs de erro, logs de segurança e limpeza)
-  - [x] Atualizar `app/helpers/AuthHelper.php` (métodos de perfil `hasRole`, `requireRole`, `requireAdmin`, `exibirAcessoNegado`)
-  - [x] Criar View `app/views/auth/acesso_negado.php` (HTTP 403, design Fiscal Precision)
-  - [x] Atualizar `app/controllers/AuthController.php` (registro de logins válidos/inválidos e logouts)
-  - [x] Atualizar `index.php` (manipuladores globais `set_exception_handler` e `set_error_handler`)
-- [ ] **Fase 6 — Cadastros Básicos (Categorias, Formas de Pagamento e Contas)**
+- [x] **Fase 6 — Cadastros Básicos (Categorias, Formas de Pagamento e Contas)**
+  - [x] Criar `app/helpers/FormatHelper.php`
+  - [x] Criar `app/models/CategoriaModel.php` e `app/controllers/CategoriaController.php`
+  - [x] Criar `app/views/categorias/index.php`
+  - [x] Criar `app/models/FormaPagamentoModel.php` e `app/controllers/FormaPagamentoController.php`
+  - [x] Criar `app/views/formas_pagamento/index.php`
+  - [x] Criar `app/models/ContaModel.php` e `app/controllers/ContaController.php`
+  - [x] Criar `app/views/contas/index.php`
+  - [x] Criar `app/views/layouts/header.php` e `app/views/layouts/footer.php`
+  - [x] Atualizar `app/views/dashboard/index.php`
+  - [x] Atualizar `index.php` com as 9 novas rotas protegidas por RBAC
 - [ ] **Fase 7 — Gestão de Usuários e Auto-gestão de Perfil**
 - [ ] **Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete)**
 - [ ] **Fase 9 — Lixeira (Consulta e Restauração por Perfil)**
@@ -57,5 +65,4 @@
 
 ## Próxima Ação Recomendada
 
-Fase 5 concluída com sucesso! Iniciar a **Fase 6 — Cadastros Básicos (Categorias, Formas de Pagamento e Contas)** em um novo chat com o prompt da próxima fase.
-
+Fase 6 concluída com sucesso! Iniciar a **Fase 7 — Gestão de Usuários e Auto-gestão de Perfil** em um novo chat com o prompt da próxima fase.
