@@ -779,15 +779,6 @@ class FPDF {
         }
     }
 
-    protected function _beginpage($orientation='', $size='', $rotation=0) {
-        $this->page++;
-        $this->pages[$this->page] = '';
-        $this->state = 2;
-        $this->x = $this->lMargin;
-        $this->y = $this->tMargin;
-        $this->FontFamily = '';
-    }
-
     protected function _putheader() {
         // Already put in _begindoc
     }
