@@ -1,8 +1,8 @@
 # Status do Projeto — Finzy
 
 **Última atualização:** 2026-07-31  
-**Fase Atual:** Fase 9 — Lixeira (Consulta e Restauração por Perfil) — Concluída  
-**Próximo Passo:** Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5) (em chat novo + prompt da próxima fase)
+**Fase Atual:** Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5) — Concluída  
+**Próximo Passo:** Fase 11 — Configurações Gerais e Gerenciamento de Logs (em chat novo + prompt da próxima fase)
 
 ---
 
@@ -31,11 +31,13 @@
 - **Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete) (Concluída):**
   - Criação de `LancamentoModel.php`, `LancamentoController.php` e views de lançamentos com paginação, filtros e soft delete.
 - **Fase 9 — Lixeira (Consulta e Restauração por Perfil) (Concluída):**
-  - Adicionados métodos no `LancamentoModel.php` (`listarLixeira`, `contarLixeira`, `buscarExcluidoPorId`, `restaurar`).
-  - Criado `LixeiraController.php` com suporte a listagem filtrada por perfil (Administrador vs Operador) e action de restauração com validação de CSRF, RBAC e autoria da exclusão.
-  - Criada a View `app/views/lixeira/index.php` seguindo o Design System *Fiscal Precision* com tabela responsiva, estado vazio com atalho e modais de confirmação de restauração.
-  - Atualizado o header (`app/views/layouts/header.php`) adicionando o link da Lixeira no menu de navegação.
-  - Registradas as rotas `lixeira` e `lixeira_restaurar` no Front Controller `index.php`.
+  - Adicionados métodos de lixeira e criado `LixeiraController.php` com views e controle RBAC por perfil.
+- **Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5) (Concluída):**
+  - Adicionados métodos de agregação no `LancamentoModel.php` (`obterKpisDashboard`, `obterGraficoComparativo`, `obterTop5CategoriasDespesa`, `obterUltimosLancamentos`).
+  - Criado `DashboardController.php` com suporte a atalhos de período ("Este Mês", "Mês Passado", "Este Ano", "Personalizado").
+  - Criada a biblioteca local de gráficos em HTML5 Canvas em `assets/js/chart.min.js` e script `assets/js/dashboard.js` (sem dependência de CDN externa).
+  - Criada a View `app/views/dashboard/index.php` seguindo o Design System *Fiscal Precision* com 4 cards de KPIs (Saldo, Receitas, Despesas, Pendências e Atrasos), gráfico comparativo de Receitas vs Despesas, ranking Top 5 de categorias e tabela de lançamentos recentes.
+  - Atualizada a rota `dashboard` no Front Controller `index.php`.
 
 ---
 
@@ -51,12 +53,12 @@
 - [x] **Fase 7 — Gestão de Usuários e Auto-gestão de Perfil**
 - [x] **Fase 8 — Lançamentos Financeiros (Operacional e Soft Delete)**
 - [x] **Fase 9 — Lixeira (Consulta e Restauração por Perfil)**
-  - [x] Atualizar `app/models/LancamentoModel.php` com métodos da lixeira
-  - [x] Criar `app/controllers/LixeiraController.php`
-  - [x] Criar `app/views/lixeira/index.php`
-  - [x] Atualizar `app/views/layouts/header.php` com o link Lixeira
-  - [x] Atualizar `index.php` com as rotas `lixeira` e `lixeira_restaurar`
-- [ ] **Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5)**
+- [x] **Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5)**
+  - [x] Atualizar `app/models/LancamentoModel.php` com consultas do Dashboard
+  - [x] Criar `app/controllers/DashboardController.php`
+  - [x] Criar biblioteca de gráficos Canvas em `assets/js/chart.min.js` e `assets/js/dashboard.js`
+  - [x] Construir View `app/views/dashboard/index.php`
+  - [x] Atualizar rota `dashboard` em `index.php`
 - [ ] **Fase 11 — Configurações Gerais e Gerenciamento de Logs**
 - [ ] **Fase 12 — Relatórios e Exportações (CSV e PDF)**
 - [ ] **Fase 13 — Revisão de Segurança, Qualidade e Validação Final**
@@ -65,4 +67,4 @@
 
 ## Próxima Ação Recomendada
 
-Fase 9 concluída com sucesso! Iniciar a **Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5)** em um novo chat com o prompt da próxima fase.
+Fase 10 concluída com sucesso! Iniciar a **Fase 11 — Configurações Gerais e Gerenciamento de Logs** em um novo chat com o prompt da próxima fase.

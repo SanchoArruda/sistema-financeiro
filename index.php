@@ -32,6 +32,7 @@ require_once __DIR__ . '/app/helpers/FormatHelper.php';
 
 // Carrega controllers
 require_once __DIR__ . '/app/controllers/AuthController.php';
+require_once __DIR__ . '/app/controllers/DashboardController.php';
 require_once __DIR__ . '/app/controllers/CategoriaController.php';
 require_once __DIR__ . '/app/controllers/FormaPagamentoController.php';
 require_once __DIR__ . '/app/controllers/ContaController.php';
@@ -154,8 +155,7 @@ switch ($route) {
         break;
 
     case 'dashboard':
-        AuthHelper::requireLogin();
-        require __DIR__ . '/app/views/dashboard/index.php';
+        (new DashboardController())->index();
         break;
 
     // Rotas de Cadastros Básicos (Fase 6 — Restrito a Administradores via Controller)

@@ -456,18 +456,193 @@ class LancamentoModel {
      * @param int $id
      * @return bool
      */
-    public function restaurar(int $id): bool {
+    /**
+     * Retorna os KPIs consolidados para o Dashboard no período especificado.
+     * Somente considera lançamentos não excluídos (excluido_em IS NULL).
+     * 
+     * @param string $dataInicio (Formato YYYY-MM-DD)
+     * @param string $dataFim (Formato YYYY-MM-DD)
+     * @return array
+     */
+    public function obterKpisDashboard(string $dataInicio, string $dataFim): array {
         $pdo = Database::getConnection();
 
-        $sql = "UPDATE lancamentos
-                SET excluido_em = NULL,
-                    excluido_por = NULL
-                WHERE id = :id AND excluido_em IS NOT NULL";
+        $sql = "SELECT 
+                    COALESCE(SUM(CASE WHEN l.tipo = 'receita' THEN l.valor ELSE 0 END), 0) AS total_receitas,
+                    COALESCE(SUM(CASE WHEN l.tipo = 'despesa' THEN l.valor ELSE 0 END), 0) AS total_despesas,
+                    COALESCE(SUM(CASE WHEN l.tipo = 'receita' AND l.data_pagamento IS NOT NULL THEN l.valor ELSE 0 END), 0) AS receitas_realizadas,
+                    COALESCE(SUM(CASE WHEN l.tipo = 'receita' AND l.data_pagamento IS NULL THEN l.valor ELSE 0 END), 0) AS receitas_pendentes,
+                    COALESCE(SUM(CASE WHEN l.tipo = 'despesa' AND l.data_pagamento IS NOT NULL THEN l.valor ELSE 0 END), 0) AS despesas_realizadas,
+                    COALESCE(SUM(CASE WHEN l.tipo = 'despesa' AND l.data_pagamento IS NULL THEN l.valor ELSE 0 END), 0) AS despesas_pendentes,
+                    COALESCE(SUM(CASE WHEN l.data_pagamento IS NULL THEN l.valor ELSE 0 END), 0) AS total_pendencias,
+                    COALESCE(SUM(CASE WHEN l.data_pagamento IS NULL AND l.data_lancamento < CURDATE() THEN 1 ELSE 0 END), 0) AS qtd_atrasados
+                FROM lancamentos l
+                WHERE l.excluido_em IS NULL
+                  AND l.data_lancamento >= :data_inicio
+                  AND l.data_lancamento <= :data_fim";
 
         $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->bindValue(':data_inicio', $dataInicio);
+        $stmt->bindValue(':data_fim', $dataFim);
+        $stmt->execute();
 
-        return $stmt->execute();
+        $res = $stmt->fetch() ?: [];
+
+        $totalReceitas = (float)($res['total_receitas'] ?? 0);
+        $totalDespesas = (float)($res['total_despesas'] ?? 0);
+        $saldoPeriodo = $totalReceitas - $totalDespesas;
+
+        return [
+            'total_receitas'      => $totalReceitas,
+            'total_despesas'      => $totalDespesas,
+            'saldo_periodo'       => $saldoPeriodo,
+            'receitas_realizadas' => (float)($res['receitas_realizadas'] ?? 0),
+            'receitas_pendentes'  => (float)($res['receitas_pendentes'] ?? 0),
+            'despesas_realizadas' => (float)($res['despesas_realizadas'] ?? 0),
+            'despesas_pendentes'  => (float)($res['despesas_pendentes'] ?? 0),
+            'total_pendencias'    => (float)($res['total_pendencias'] ?? 0),
+            'qtd_atrasados'       => (int)($res['qtd_atrasados'] ?? 0)
+        ];
+    }
+
+    /**
+     * Retorna os dados agrupados por data/período para o gráfico comparativo de Receitas vs Despesas.
+     * Se o intervalo for menor ou igual a 31 dias, agrupa por dia (DD/MM).
+     * Se for maior, agrupa por mês (MM/YYYY).
+     * 
+     * @param string $dataInicio
+     * @param string $dataFim
+     * @return array Array de itens contendo ['rotulo', 'receita', 'despesa']
+     */
+    public function obterGraficoComparativo(string $dataInicio, string $dataFim): array {
+        $pdo = Database::getConnection();
+
+        $inicioTs = strtotime($dataInicio);
+        $fimTs = strtotime($dataFim);
+        $diasDiferenca = ($fimTs - $inicioTs) / (60 * 60 * 24);
+
+        if ($diasDiferenca <= 31) {
+            // Agrupamento por dia
+            $sql = "SELECT 
+                        DATE_FORMAT(l.data_lancamento, '%d/%m') AS rotulo,
+                        l.data_lancamento AS ordenacao,
+                        COALESCE(SUM(CASE WHEN l.tipo = 'receita' THEN l.valor ELSE 0 END), 0) AS receita,
+                        COALESCE(SUM(CASE WHEN l.tipo = 'despesa' THEN l.valor ELSE 0 END), 0) AS despesa
+                    FROM lancamentos l
+                    WHERE l.excluido_em IS NULL
+                      AND l.data_lancamento >= :data_inicio
+                      AND l.data_lancamento <= :data_fim
+                    GROUP BY DATE_FORMAT(l.data_lancamento, '%d/%m'), l.data_lancamento
+                    ORDER BY l.data_lancamento ASC";
+        } else {
+            // Agrupamento por mês
+            $sql = "SELECT 
+                        DATE_FORMAT(l.data_lancamento, '%m/%Y') AS rotulo,
+                        DATE_FORMAT(l.data_lancamento, '%Y-%m-01') AS ordenacao,
+                        COALESCE(SUM(CASE WHEN l.tipo = 'receita' THEN l.valor ELSE 0 END), 0) AS receita,
+                        COALESCE(SUM(CASE WHEN l.tipo = 'despesa' THEN l.valor ELSE 0 END), 0) AS despesa
+                    FROM lancamentos l
+                    WHERE l.excluido_em IS NULL
+                      AND l.data_lancamento >= :data_inicio
+                      AND l.data_lancamento <= :data_fim
+                    GROUP BY DATE_FORMAT(l.data_lancamento, '%m/%Y'), DATE_FORMAT(l.data_lancamento, '%Y-%m-01')
+                    ORDER BY ordenacao ASC";
+        }
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':data_inicio', $dataInicio);
+        $stmt->bindValue(':data_fim', $dataFim);
+        $stmt->execute();
+
+        $resultados = $stmt->fetchAll() ?: [];
+        $dados = [];
+
+        foreach ($resultados as $row) {
+            $dados[] = [
+                'rotulo'  => $row['rotulo'],
+                'receita' => (float)$row['receita'],
+                'despesa' => (float)$row['despesa']
+            ];
+        }
+
+        return $dados;
+    }
+
+    /**
+     * Retorna o ranking das 5 maiores categorias de despesa no período.
+     * 
+     * @param string $dataInicio
+     * @param string $dataFim
+     * @return array
+     */
+    public function obterTop5CategoriasDespesa(string $dataInicio, string $dataFim): array {
+        $pdo = Database::getConnection();
+
+        $sql = "SELECT 
+                    cat.id,
+                    cat.nome AS categoria_nome,
+                    COALESCE(SUM(l.valor), 0) AS total_valor
+                FROM lancamentos l
+                INNER JOIN categorias cat ON l.categoria_id = cat.id
+                WHERE l.tipo = 'despesa'
+                  AND l.excluido_em IS NULL
+                  AND l.data_lancamento >= :data_inicio
+                  AND l.data_lancamento <= :data_fim
+                GROUP BY cat.id, cat.nome
+                ORDER BY total_valor DESC
+                LIMIT 5";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':data_inicio', $dataInicio);
+        $stmt->bindValue(':data_fim', $dataFim);
+        $stmt->execute();
+
+        $resultados = $stmt->fetchAll() ?: [];
+        $top5 = [];
+
+        foreach ($resultados as $row) {
+            $top5[] = [
+                'id'             => (int)$row['id'],
+                'categoria_nome' => $row['categoria_nome'],
+                'total_valor'    => (float)$row['total_valor']
+            ];
+        }
+
+        return $top5;
+    }
+
+    /**
+     * Retorna os últimos N lançamentos cadastrados no sistema (ativos).
+     * 
+     * @param int $limit
+     * @return array
+     */
+    public function obterUltimosLancamentos(int $limit = 5): array {
+        $pdo = Database::getConnection();
+
+        $sql = "SELECT l.*,
+                       cat.nome AS categoria_nome,
+                       cnt.nome AS conta_nome,
+                       fpg.nome AS forma_pagamento_nome,
+                       CASE 
+                           WHEN l.data_pagamento IS NOT NULL THEN 'realizado'
+                           WHEN l.data_lancamento < CURDATE() THEN 'atrasado'
+                           ELSE 'pendente'
+                       END AS situacao
+                FROM lancamentos l
+                INNER JOIN categorias cat ON l.categoria_id = cat.id
+                INNER JOIN contas cnt ON l.conta_id = cnt.id
+                INNER JOIN formas_pagamento fpg ON l.forma_pagamento_id = fpg.id
+                WHERE l.excluido_em IS NULL
+                ORDER BY l.data_lancamento DESC, l.id DESC
+                LIMIT :limit";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll() ?: [];
     }
 }
+
 
