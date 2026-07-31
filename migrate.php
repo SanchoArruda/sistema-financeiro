@@ -32,6 +32,18 @@ try {
     $runner = new MigrationRunner();
     $results = $runner->run();
 
+    if (isset($_GET['reset_admin']) && $_GET['reset_admin'] === '1') {
+        $pdo = Database::getConnection();
+        $senhaHash = password_hash('admin123', PASSWORD_DEFAULT);
+        $stmtReset = $pdo->prepare("UPDATE `usuarios` SET `senha_hash` = :hash, `primeiro_acesso` = 1 WHERE `email` = 'admin@admin.com'");
+        $stmtReset->execute([':hash' => $senhaHash]);
+        $results[] = [
+            'file' => 'reset_admin',
+            'status' => 'success',
+            'message' => 'Conta admin de fábrica (admin@admin.com / admin123) resetada para primeiro acesso (primeiro_acesso = 1).'
+        ];
+    }
+
     if ($isCli) {
         echo "\n=========================================\n";
         echo "    Finzy — Execução de Migrations\n";
