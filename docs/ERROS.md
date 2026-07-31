@@ -47,7 +47,13 @@ Este arquivo serve para registrar falhas, exceções ou problemas encontrados du
 - Sintoma: Erro fatal exibido no navegador ao carregar qualquer página após inclusão do FPDF.
 - Causa: O arquivo `vendor/fpdf/fpdf.php` possuía uma segunda declaração idêntica do método protegido `_beginpage()`.
 - Solução aplicada: Removida a declaração duplicada do método `_beginpage()` no arquivo `vendor/fpdf/fpdf.php`.
-- Como evitar no futuro: Auditar o arquivo da biblioteca local garantindo declaração única para cada método.
+## 2026-07-31 - Call to undefined method AuthHelper::requireAuth()
+
+- Sintoma: Tela de erro amigável "Ocorreu um erro inesperado" exibida ao tentar acessar a rota `?route=relatorios`.
+- Causa: O `RelatorioController.php` tentou invocar `AuthHelper::requireAuth()`, quando a classe `AuthHelper` definia o método como `requireLogin()`.
+- Solução aplicada: Atualizado o `RelatorioController.php` para utilizar `AuthHelper::requireLogin()` e adicionado o método estático `requireAuth()` em `AuthHelper.php` como alias.
+- Como evitar no futuro: Manter alias de compatibilidade no `AuthHelper` (`requireAuth` -> `requireLogin`).
+
 
 
 
