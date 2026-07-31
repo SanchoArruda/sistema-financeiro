@@ -35,5 +35,14 @@ Este arquivo serve para registrar falhas, exceções ou problemas encontrados du
 - Solução aplicada: Substituídas as chamadas em `ConfiguracaoModel.php` para utilizar `Database::getConnection()`.
 - Como evitar no futuro: Padronizar o uso de `Database::getConnection()` em todos os models para obter a conexão PDO Singleton.
 
+---
+
+## 2026-07-31 - Call to undefined method FormatHelper::formatarDataHora()
+
+- Sintoma: Card de erro ("Ocorreu um erro inesperado") exibido na seção inferior da View `app/views/configuracoes/index.php`.
+- Causa: A View tentou invocar `FormatHelper::formatarDataHora()`, que não possuía alias na classe `FormatHelper` (possuía apenas `dataHora()`).
+- Solução aplicada: Criado o método estático `formatarDataHora(?string $dataHora)` no `app/helpers/FormatHelper.php` como alias para `dataHora()`.
+- Como evitar no futuro: Manter aliases descritivos de formatação (`formatarDataHora`, `formatarData`, `formatarMoeda`) alinhados às Views do sistema.
+
 
 

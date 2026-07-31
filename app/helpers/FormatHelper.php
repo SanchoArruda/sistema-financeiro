@@ -105,6 +105,13 @@ class FormatHelper {
     }
 
     /**
+     * Alias para dataHora()
+     */
+    public static function formatarDataHora(?string $dataHora): string {
+        return self::dataHora($dataHora);
+    }
+
+    /**
      * Retorna a badge de status (Ativo / Inativo) formatada em HTML Bootstrap.
      * 
      * @param string $status 'ativo' ou 'inativo'
