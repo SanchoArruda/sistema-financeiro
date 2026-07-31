@@ -1,8 +1,8 @@
 # Status do Projeto — Finzy
 
 **Última atualização:** 2026-07-31  
-**Fase Atual:** Configuração de Controle de Versão (Git & GitHub) — Concluída  
-**Próximo Passo:** Fase 2 — Banco de Dados, Conexão e Migrations (em chat novo + prompt da Fase 2)
+**Fase Atual:** Fase 2 — Banco de Dados, Conexão e Migrations — Concluída  
+**Próximo Passo:** Fase 3 — Autenticação, Sessão e Troca de Senha (em chat novo + prompt da Fase 3)
 
 ---
 
@@ -15,34 +15,26 @@
 - `docs/ERROS.md` inicializado.
 - Estrutura base de diretórios, proteções `.htaccess`, ponto de entrada `index.php`, `.gitignore`, `config/config.php` e arquivos base de estilo (`assets/css/app.css` e `assets/js/app.js`) criados e configurados.
 - **Controle de Versão (Git & GitHub):**
-  - Repositório Git inicializado no diretório do projeto.
-  - Arquivo `.gitignore` revisado e atualizado para proteger `config/config.php` (credenciais de BD/SMTP), logs e backups.
-  - Arquivo `config/config.example.php` criado como modelo de configuração sem segredos.
-  - Arquivo `.gitattributes` criado para padronização de finais de linha (LF) e tipos de arquivo.
-  - Auditoria de segurança confirmou que nenhum segredo ou dado sensível foi incluído no staging.
-  - Primeiro commit efetuado com sucesso ("Estrutura inicial do projeto").
-  - Repositório remoto `origin` conectado a `git@github.com:SanchoArruda/sistema-financeiro.git`.
-  - Autenticação por chave SSH configurada e `git push` executado com sucesso (branch `main` sincronizada).
+  - Repositório Git inicializado e sincronizado na branch `main`.
+- **Fase 2 — Banco de Dados, Conexão e Migrations (Concluída):**
+  - Classe de Conexão PDO `app/models/Database.php` criada com charset `utf8mb4_unicode_ci`, prepared statements e auto-criação de BD local se inexistente.
+  - Runner de migrations `database/migrations/Migration.php` construído com controle de execução duplicada via tabela `migrations_executadas`.
+  - Todas as 9 migrations criadas seguindo rigorosamente a Seção 11 do FSD (`001_` a `009_`).
+  - Script `migrate.php` criado na raiz para execução via CLI ou rota protegida/navegador.
+  - Seed inicial (`009_dados_iniciais.php`) inclui o Administrador de fábrica (`admin@admin.com` / `admin123` com `primeiro_acesso = 1`), categorias padrão, formas de pagamento, contas e configurações do sistema.
 
 ---
 
 ## Progresso das Fases (`docs/PLANO.md`)
 
 - [x] **Fase 1 — Infraestrutura e Estrutura Base do Projeto**
-  - [x] Criar estrutura de pastas (`config/`, `app/`, `database/`, `assets/`, `logs/`, `vendor/`)
-  - [x] Criar `.gitignore`
-  - [x] Criar `.htaccess` principal e proteções individuais em pastas sensíveis (`Require all denied`)
-  - [x] Criar `config/config.php` base e `config/config.example.php`
-  - [x] Criar ponto de entrada `index.php`
-  - [x] Criar `assets/css/app.css` com Design System *Fiscal Precision* e `assets/js/app.js`
 - [x] **Configuração de Git & GitHub (Backup Seguro)**
-  - [x] Inicializar Git e galho principal `main`
-  - [x] Criar e configurar `.gitignore` e `.gitattributes`
-  - [x] Auditar exclusão de credenciais e logs sensíveis
-  - [x] Fazer commit inicial do projeto
-  - [x] Conectar remote origin `git@github.com:SanchoArruda/sistema-financeiro.git`
-  - [x] Realizar `git push` no terminal com chave SSH autorizada
-- [ ] **Fase 2 — Banco de Dados, Conexão e Migrations**
+- [x] **Fase 2 — Banco de Dados, Conexão e Migrations**
+  - [x] Criar `app/models/Database.php` (PDO Singleton + prepared statements)
+  - [x] Criar `database/migrations/Migration.php` (Runner de migrations)
+  - [x] Criar migrations `001` a `008` (tabelas e índices do FSD)
+  - [x] Criar migration `009` (dados iniciais: admin, categorias, formas de pagamento, contas, configs)
+  - [x] Criar script `migrate.php` na raiz
 - [ ] **Fase 3 — Autenticação, Sessão e Troca de Senha**
 - [ ] **Fase 4 — Recuperação de Senha por E-mail**
 - [ ] **Fase 5 — Controle de Acesso (RBAC) e Sistema de Logs**
@@ -59,4 +51,4 @@
 
 ## Próxima Ação Recomendada
 
-Backup 100% concluído no GitHub! Iniciar a **Fase 2 — Banco de Dados, Conexão e Migrations** em um novo chat com o prompt correspondente à Fase 2.
+Fase 2 concluída com sucesso! Iniciar a **Fase 3 — Autenticação, Sessão e Troca de Senha** em um novo chat com o prompt correspondente à Fase 3.

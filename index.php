@@ -38,7 +38,7 @@ if (session_status() === PHP_SESSION_NONE) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo defined('APP_NAME') ? APP_NAME : 'Finzy'; ?> — Infraestrutura Pronta</title>
+    <title><?php echo defined('APP_NAME') ? APP_NAME : 'Finzy'; ?> — Banco de Dados e Migrations</title>
     <link rel="stylesheet" href="assets/css/app.css">
 </head>
 <body class="bg-surface text-on-surface">
@@ -46,13 +46,13 @@ if (session_status() === PHP_SESSION_NONE) {
         <div class="card p-8 bg-surface-container rounded-lg border border-outline-variant shadow-sm mt-12">
             <h1 class="text-3xl font-bold text-primary mb-4"><?php echo defined('APP_NAME') ? APP_NAME : 'Finzy'; ?></h1>
             <p class="text-body-md text-on-surface-variant mb-6">
-                A infraestrutura e a base inicial do projeto foram configuradas com sucesso.
+                A estrutura do banco de dados, conexão PDO e migrations (001 a 009) foram construídas com sucesso.
             </p>
             <div class="badge inline-block bg-secondary text-on-secondary px-4 py-2 rounded-md font-semibold text-sm mb-4">
-                Fase 1 — Infraestrutura Concluída
+                Fase 2 — Banco de Dados, Conexão e Migrations Concluídos
             </div>
             <p class="text-body-sm text-outline">
-                Próxima etapa: Execução das migrations do banco de dados (Fase 2).
+                Próxima etapa: Autenticação, Sessão e Troca de Senha (Fase 3).
             </p>
         </div>
     </main>
