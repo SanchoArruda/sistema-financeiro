@@ -71,7 +71,7 @@ class RelatorioController {
      * Tela principal de consulta aos relatórios financeiros.
      */
     public function index(): void {
-        AuthHelper::requireAuth();
+        AuthHelper::requireLogin();
 
         $filtros = $this->obterFiltrosSanitizados();
 
@@ -163,7 +163,7 @@ class RelatorioController {
      * Exportação do relatório em formato CSV nativo em UTF-8 com BOM e separador ';'.
      */
     public function exportarCsv(): void {
-        AuthHelper::requireAuth();
+        AuthHelper::requireLogin();
 
         $filtros = $this->obterFiltrosSanitizados();
         $filename = 'relatorio_' . $filtros['tipo_relatorio'] . '_' . date('Ymd_His') . '.csv';
@@ -257,7 +257,7 @@ class RelatorioController {
      * Exportação do relatório em formato PDF A4 formatado.
      */
     public function exportarPdf(): void {
-        AuthHelper::requireAuth();
+        AuthHelper::requireLogin();
 
         $filtros = $this->obterFiltrosSanitizados();
         $periodoTexto = FormatHelper::data($filtros['data_inicio']) . ' até ' . FormatHelper::data($filtros['data_fim']);

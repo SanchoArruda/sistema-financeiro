@@ -143,6 +143,15 @@ class AuthHelper {
     }
 
     /**
+     * Alias para requireLogin(). Exige autenticação.
+     * 
+     * @param string $redirectUrl
+     */
+    public static function requireAuth(string $redirectUrl = '?route=login'): void {
+        self::requireLogin($redirectUrl);
+    }
+
+    /**
      * Exige que o usuário conclua a troca de senha do primeiro acesso.
      */
     public static function checkFirstAccessRedirect(): void {

@@ -271,23 +271,25 @@ class UsuarioModel {
                     SET nome = :nome,
                         senha_hash = :senha_hash,
                         primeiro_acesso = 0,
-                        alterado_por = :id,
+                        alterado_por = :alterado_por,
                         alterado_em = NOW()
                     WHERE id = :id";
 
             $stmt = $pdo->prepare($sql);
             $stmt->bindValue(':nome', trim($nome));
             $stmt->bindValue(':senha_hash', $senhaHash);
+            $stmt->bindValue(':alterado_por', $id, PDO::PARAM_INT);
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         } else {
             $sql = "UPDATE usuarios
                     SET nome = :nome,
-                        alterado_por = :id,
+                        alterado_por = :alterado_por,
                         alterado_em = NOW()
                     WHERE id = :id";
 
             $stmt = $pdo->prepare($sql);
             $stmt->bindValue(':nome', trim($nome));
+            $stmt->bindValue(':alterado_por', $id, PDO::PARAM_INT);
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         }
 
