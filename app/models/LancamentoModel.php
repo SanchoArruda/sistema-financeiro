@@ -643,6 +643,219 @@ class LancamentoModel {
 
         return $stmt->fetchAll() ?: [];
     }
+
+    /**
+     * Calcula o Saldo Inicial acumulado do período antes de data_inicio.
+     * (Soma dos saldos iniciais das contas ativas + receitas realizadas anteriores - despesas realizadas anteriores)
+     * 
+     * @param string $dataInicio Format YYYY-MM-DD
+     * @param int|null $contaId
+     * @return float
+     */
+    public function obterSaldoInicialPeriodo(string $dataInicio, ?int $contaId = null): float {
+        $pdo = Database::getConnection();
+
+        // 1. Saldo Inicial Base das Contas
+        $sqlContas = "SELECT COALESCE(SUM(saldo_inicial), 0) AS total_inicial FROM contas WHERE status = 'ativo'";
+        $paramsContas = [];
+        if ($contaId !== null && $contaId > 0) {
+            $sqlContas = "SELECT COALESCE(SUM(saldo_inicial), 0) AS total_inicial FROM contas WHERE id = :conta_id";
+            $paramsContas[':conta_id'] = $contaId;
+        }
+
+        $stmtContas = $pdo->prepare($sqlContas);
+        foreach ($paramsContas as $k => $v) {
+            $stmtContas->bindValue($k, $v);
+        }
+        $stmtContas->execute();
+        $saldoInicialBase = (float)($stmtContas->fetchColumn() ?: 0);
+
+        // 2. Movimentações Realizadas Anteriores à data_inicio
+        $sqlAnteriores = "SELECT 
+                            COALESCE(SUM(CASE WHEN tipo = 'receita' THEN valor ELSE 0 END), 0) AS receitas_anteriores,
+                            COALESCE(SUM(CASE WHEN tipo = 'despesa' THEN valor ELSE 0 END), 0) AS despesas_anteriores
+                          FROM lancamentos
+                          WHERE excluido_em IS NULL
+                            AND data_pagamento IS NOT NULL
+                            AND data_lancamento < :data_inicio";
+        $paramsAnteriores = [':data_inicio' => $dataInicio];
+
+        if ($contaId !== null && $contaId > 0) {
+            $sqlAnteriores .= " AND conta_id = :conta_id";
+            $paramsAnteriores[':conta_id'] = $contaId;
+        }
+
+        $stmtAnt = $pdo->prepare($sqlAnteriores);
+        foreach ($paramsAnteriores as $k => $v) {
+            $stmtAnt->bindValue($k, $v);
+        }
+        $stmtAnt->execute();
+        $resAnt = $stmtAnt->fetch() ?: ['receitas_anteriores' => 0, 'despesas_anteriores' => 0];
+
+        $receitasAnteriores = (float)($resAnt['receitas_anteriores'] ?? 0);
+        $despesasAnteriores = (float)($resAnt['despesas_anteriores'] ?? 0);
+
+        return $saldoInicialBase + $receitasAnteriores - $despesasAnteriores;
+    }
+
+    /**
+     * Retorna os lançamentos do Relatório 1: Movimentações de Receitas e Despesas sem paginação.
+     * 
+     * @param array $filtros
+     * @return array
+     */
+    public function obterRelatorioMovimentacoes(array $filtros): array {
+        $pdo = Database::getConnection();
+
+        $whereData = $this->construirWhereClause($filtros);
+        $whereSql = $whereData['where'];
+        $params = $whereData['params'];
+
+        $sql = "SELECT l.*,
+                       cat.nome AS categoria_nome,
+                       cnt.nome AS conta_nome,
+                       fpg.nome AS forma_pagamento_nome,
+                       uc.nome AS criador_nome,
+                       CASE 
+                           WHEN l.data_pagamento IS NOT NULL THEN 'realizado'
+                           WHEN l.data_lancamento < CURDATE() THEN 'atrasado'
+                           ELSE 'pendente'
+                       END AS situacao
+                FROM lancamentos l
+                INNER JOIN categorias cat ON l.categoria_id = cat.id
+                INNER JOIN contas cnt ON l.conta_id = cnt.id
+                INNER JOIN formas_pagamento fpg ON l.forma_pagamento_id = fpg.id
+                INNER JOIN usuarios uc ON l.criado_por = uc.id
+                {$whereSql}
+                ORDER BY l.data_lancamento ASC, l.id ASC";
+
+        $stmt = $pdo->prepare($sql);
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k, $v);
+        }
+        $stmt->execute();
+
+        return $stmt->fetchAll() ?: [];
+    }
+
+    /**
+     * Retorna as despesas pendentes para o Relatório 2.
+     * 
+     * @param array $filtros
+     * @return array
+     */
+    public function obterRelatorioDespesasPendentes(array $filtros): array {
+        $pdo = Database::getConnection();
+
+        $filtrosForcados = array_merge($filtros, [
+            'tipo' => 'despesa',
+            'situacao' => ''
+        ]);
+
+        $whereData = $this->construirWhereClause($filtrosForcados);
+        $whereSql = $whereData['where'] . " AND l.data_pagamento IS NULL";
+        $params = $whereData['params'];
+
+        $sql = "SELECT l.*,
+                       cat.nome AS categoria_nome,
+                       cnt.nome AS conta_nome,
+                       fpg.nome AS forma_pagamento_nome,
+                       uc.nome AS criador_nome,
+                       CASE 
+                           WHEN l.data_lancamento < CURDATE() THEN 'atrasado'
+                           ELSE 'pendente'
+                       END AS situacao
+                FROM lancamentos l
+                INNER JOIN categorias cat ON l.categoria_id = cat.id
+                INNER JOIN contas cnt ON l.conta_id = cnt.id
+                INNER JOIN formas_pagamento fpg ON l.forma_pagamento_id = fpg.id
+                INNER JOIN usuarios uc ON l.criado_por = uc.id
+                {$whereSql}
+                ORDER BY l.data_lancamento ASC, l.id ASC";
+
+        $stmt = $pdo->prepare($sql);
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k, $v);
+        }
+        $stmt->execute();
+
+        return $stmt->fetchAll() ?: [];
+    }
+
+    /**
+     * Retorna as receitas pendentes para o Relatório 3.
+     * 
+     * @param array $filtros
+     * @return array
+     */
+    public function obterRelatorioReceitasPendentes(array $filtros): array {
+        $pdo = Database::getConnection();
+
+        $filtrosForcados = array_merge($filtros, [
+            'tipo' => 'receita',
+            'situacao' => ''
+        ]);
+
+        $whereData = $this->construirWhereClause($filtrosForcados);
+        $whereSql = $whereData['where'] . " AND l.data_pagamento IS NULL";
+        $params = $whereData['params'];
+
+        $sql = "SELECT l.*,
+                       cat.nome AS categoria_nome,
+                       cnt.nome AS conta_nome,
+                       fpg.nome AS forma_pagamento_nome,
+                       uc.nome AS criador_nome,
+                       'pendente' AS situacao
+                FROM lancamentos l
+                INNER JOIN categorias cat ON l.categoria_id = cat.id
+                INNER JOIN contas cnt ON l.conta_id = cnt.id
+                INNER JOIN formas_pagamento fpg ON l.forma_pagamento_id = fpg.id
+                INNER JOIN usuarios uc ON l.criado_por = uc.id
+                {$whereSql}
+                ORDER BY l.data_lancamento ASC, l.id ASC";
+
+        $stmt = $pdo->prepare($sql);
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k, $v);
+        }
+        $stmt->execute();
+
+        return $stmt->fetchAll() ?: [];
+    }
+
+    /**
+     * Retorna o agrupamento por categoria para o Relatório 4.
+     * 
+     * @param array $filtros
+     * @return array
+     */
+    public function obterRelatorioResumoCategoria(array $filtros): array {
+        $pdo = Database::getConnection();
+
+        $whereData = $this->construirWhereClause($filtros);
+        $whereSql = $whereData['where'];
+        $params = $whereData['params'];
+
+        $sql = "SELECT cat.id AS categoria_id,
+                       cat.nome AS categoria_nome,
+                       cat.tipo AS categoria_tipo,
+                       l.tipo AS lancamento_tipo,
+                       COUNT(l.id) AS total_lancamentos,
+                       SUM(l.valor) AS total_valor
+                FROM lancamentos l
+                INNER JOIN categorias cat ON l.categoria_id = cat.id
+                {$whereSql}
+                GROUP BY cat.id, cat.nome, cat.tipo, l.tipo
+                ORDER BY l.tipo ASC, total_valor DESC";
+
+        $stmt = $pdo->prepare($sql);
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k, $v);
+        }
+        $stmt->execute();
+
+        return $stmt->fetchAll() ?: [];
+    }
 }
 
 

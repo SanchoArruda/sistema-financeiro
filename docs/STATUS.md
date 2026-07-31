@@ -1,8 +1,8 @@
 # Status do Projeto — Finzy
 
 **Última atualização:** 2026-07-31  
-**Fase Atual:** Fase 11 — Configurações Gerais e Gerenciamento de Logs — Concluída  
-**Próximo Passo:** Fase 12 — Relatórios e Exportações (CSV e PDF) (em chat novo + prompt da próxima fase)
+**Fase Atual:** Fase 12 — Relatórios e Exportações (CSV e PDF) — Concluída  
+**Próximo Passo:** Fase 13 — Revisão de Segurança, Qualidade e Validação Final (em chat novo + prompt da próxima fase)
 
 ---
 
@@ -35,12 +35,13 @@
 - **Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5) (Concluída):**
   - Construção da tela principal com KPIs do mês, gráfico comparativo, ranking Top 5 e suporte a filtros de período.
 - **Fase 11 — Configurações Gerais e Gerenciamento de Logs (Concluída):**
-  - Criado `ConfiguracaoModel.php` para consulta e persistência dos parâmetros operacionais globais (`tempo_sessao_minutos`, `retencao_logs_dias`).
-  - Criado `ConfiguracaoController.php` com controle de permissão RBAC exclusivo para Administradores e validação estrita de intervalos (sessão: 5-480 min, retenção: 1-365 dias).
-  - Expandido `LogHelper.php` com métodos `getLogStats()` e `cleanErrorLogs()` para contabilizar uso de disco e permitir limpeza manual segura preservando logs de auditoria/segurança.
-  - Atualizado `AuthHelper.php` para checar `tempo_sessao_minutos` dinamicamente a cada requisição.
-  - Criada a View `app/views/configuracoes/index.php` alinhada ao Design System *Fiscal Precision*, com formulário de parâmetros, cards de estatísticas de logs e modal de confirmação para limpeza manual.
-  - Atualizados `index.php` (rotas `configuracoes`, `configuracoes_salvar`, `configuracoes_limpar_logs`) e `app/views/layouts/header.php` (item no menu do Administrador).
+  - Criados `ConfiguracaoModel.php` e `ConfiguracaoController.php`, expandido `LogHelper.php`, views e rotas de configurações.
+- **Fase 12 — Relatórios e Exportações (CSV e PDF) (Concluída):**
+  - Integrada a biblioteca FPDF 1.86 local em `vendor/fpdf/fpdf.php` e criado o helper `app/helpers/PdfReportHelper.php` estilizado no padrão *Fiscal Precision*.
+  - Adicionados 5 métodos de consulta no `LancamentoModel.php` (`obterSaldoInicialPeriodo`, `obterRelatorioMovimentacoes`, `obterRelatorioDespesasPendentes`, `obterRelatorioReceitasPendentes`, `obterRelatorioResumoCategoria`).
+  - Criado `RelatorioController.php` com suporte aos 4 tipos de relatórios, exportação de CSV nativo em UTF-8 com BOM e separador `;`, e geração de PDF A4.
+  - Criada a View `app/views/relatorios/index.php` com navegação por abas entre os 4 relatórios, filtros por período e atributos, atalhos dinâmicos de período ("Este Mês", "Mês Passado", "Últimos 30 Dias", "Este Ano"), cards de KPIs totalizadores e tabela responsiva.
+  - Atualizado `index.php` com as rotas `relatorios`, `relatorios_exportar_csv` e `relatorios_exportar_pdf`, e atualizado `app/views/layouts/header.php` com o item de menu "Relatórios" acessível a todos os usuários autenticados.
 
 ---
 
@@ -58,17 +59,18 @@
 - [x] **Fase 9 — Lixeira (Consulta e Restauração por Perfil)**
 - [x] **Fase 10 — Dashboard (KPIs, Gráfico e Ranking Top 5)**
 - [x] **Fase 11 — Configurações Gerais e Gerenciamento de Logs**
-  - [x] Criar `app/models/ConfiguracaoModel.php`
-  - [x] Criar `app/controllers/ConfiguracaoController.php`
-  - [x] Atualizar `app/helpers/LogHelper.php` e `app/helpers/AuthHelper.php`
-  - [x] Criar View `app/views/configuracoes/index.php`
-  - [x] Registrar rotas `configuracoes`, `configuracoes_salvar` e `configuracoes_limpar_logs` no Front Controller `index.php`
-  - [x] Adicionar link "Configurações" no menu do Administrador em `app/views/layouts/header.php`
-- [ ] **Fase 12 — Relatórios e Exportações (CSV e PDF)**
+- [x] **Fase 12 — Relatórios e Exportações (CSV e PDF)**
+  - [x] Integrar biblioteca FPDF 1.86 local em `vendor/fpdf/fpdf.php`
+  - [x] Criar `app/helpers/PdfReportHelper.php`
+  - [x] Atualizar `app/models/LancamentoModel.php` com métodos de relatórios
+  - [x] Criar `app/controllers/RelatorioController.php`
+  - [x] Criar View `app/views/relatorios/index.php`
+  - [x] Registrar rotas `relatorios`, `relatorios_exportar_csv` e `relatorios_exportar_pdf` no `index.php`
+  - [x] Adicionar link "Relatórios" na navegação principal em `app/views/layouts/header.php`
 - [ ] **Fase 13 — Revisão de Segurança, Qualidade e Validação Final**
 
 ---
 
 ## Próxima Ação Recomendada
 
-Fase 11 concluída com sucesso! Iniciar a **Fase 12 — Relatórios e Exportações (CSV e PDF)** em um novo chat com o prompt da próxima fase.
+Fase 12 concluída com sucesso! Iniciar a **Fase 13 — Revisão de Segurança, Qualidade e Validação Final** em um novo chat com o prompt da próxima fase.

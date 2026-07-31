@@ -43,6 +43,7 @@ require_once __DIR__ . '/app/controllers/UsuarioController.php';
 require_once __DIR__ . '/app/controllers/LancamentoController.php';
 require_once __DIR__ . '/app/controllers/LixeiraController.php';
 require_once __DIR__ . '/app/controllers/ConfiguracaoController.php';
+require_once __DIR__ . '/app/controllers/RelatorioController.php';
 
 // Configuração de manipuladores globais de erros e exceções
 set_exception_handler(function (Throwable $e) {
@@ -261,6 +262,19 @@ switch ($route) {
 
     case 'configuracoes_limpar_logs':
         (new ConfiguracaoController())->limparLogs();
+        break;
+
+    // Rotas de Relatórios e Exportações (Fase 12)
+    case 'relatorios':
+        (new RelatorioController())->index();
+        break;
+
+    case 'relatorios_exportar_csv':
+        (new RelatorioController())->exportarCsv();
+        break;
+
+    case 'relatorios_exportar_pdf':
+        (new RelatorioController())->exportarPdf();
         break;
 
     default:
