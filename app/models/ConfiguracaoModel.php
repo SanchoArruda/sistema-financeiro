@@ -18,7 +18,7 @@ class ConfiguracaoModel {
      * @return array Array de configurações indexado por chave
      */
     public static function obterTodas(): array {
-        $db = Database::getInstance();
+        $db = Database::getConnection();
         $sql = "SELECT c.*, u.nome AS alterado_por_nome 
                 FROM `configuracoes` c 
                 LEFT JOIN `usuarios` u ON c.alterado_por = u.id 
@@ -43,7 +43,7 @@ class ConfiguracaoModel {
      */
     public static function obterValor(string $chave, string $padrao = ''): string {
         try {
-            $db = Database::getInstance();
+            $db = Database::getConnection();
             $stmt = $db->prepare("SELECT `valor` FROM `configuracoes` WHERE `chave` = :chave LIMIT 1");
             $stmt->execute([':chave' => $chave]);
             $valor = $stmt->fetchColumn();
@@ -63,7 +63,7 @@ class ConfiguracaoModel {
      * @return bool
      */
     public static function atualizar(string $chave, string $valor, int $usuarioId): bool {
-        $db = Database::getInstance();
+        $db = Database::getConnection();
         $sql = "UPDATE `configuracoes` 
                 SET `valor` = :valor, 
                     `alterado_por` = :usuarioId, 
