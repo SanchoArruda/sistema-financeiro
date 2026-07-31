@@ -435,7 +435,7 @@ class FPDF {
 
     public function Text($x, $y, $txt) {
         if (!isset($this->CurrentFont)) $this->Error('No font has been set');
-        $s = sprintf('BT %.2F %.2F Td (%s) Tj ET', $x * $this->k, ($this->h - $y) * $this->k, $this->_escape($txt));
+        $s = sprintf('BT /F%d %.2F Tf %.2F %.2F Td (%s) Tj ET', $this->CurrentFont['i'], $this->FontSizePt, $x * $this->k, ($this->h - $y) * $this->k, $this->_escape($txt));
         if ($this->underline && $txt !== '') $s .= ' '.$this->_dounderline($x, $y, $txt);
         if ($this->ColorFlag) $s = 'q '.$this->TextColor.' '.$s.' Q';
         $this->_out($s);
@@ -479,7 +479,7 @@ class FPDF {
             else $dx = $this->cMargin;
 
             if ($this->ColorFlag) $s .= 'q '.$this->TextColor.' ';
-            $s .= sprintf('BT %.2F %.2F Td (%s) Tj ET', ($this->x + $dx) * $k, ($this->h - ($this->y + .5 * $h + .3 * $this->FontSize)) * $k, $this->_escape($txt));
+            $s .= sprintf('BT /F%d %.2F Tf %.2F %.2F Td (%s) Tj ET', $this->CurrentFont['i'], $this->FontSizePt, ($this->x + $dx) * $k, ($this->h - ($this->y + .5 * $h + .3 * $this->FontSize)) * $k, $this->_escape($txt));
             if ($this->underline) $s .= ' '.$this->_dounderline($this->x + $dx, $this->y + .5 * $h + .3 * $this->FontSize, $txt);
             if ($this->ColorFlag) $s .= ' Q';
             if ($link) $this->Link($this->x + $dx, $this->y + .5 * $h - .5 * $this->FontSize, $this->GetStringWidth($txt), $this->FontSize, $link);
